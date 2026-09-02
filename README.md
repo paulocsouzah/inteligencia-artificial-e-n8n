@@ -128,25 +128,25 @@ apoio de uso meu, não fazem parte do que chega até você por aqui.
 
 ### Disciplina 1 — Inteligência Artificial
 
-| # | Aula | Formato | Tema | Status |
-|---|------|---------|------|--------|
-| 1 | [Fundamentos de IA e LLMs](<Disciplina 1 - Inteligencia Artificial/Aula 01 - Fundamentos de IA e LLMs/README.md>) | Online | IA tradicional x generativa, LLMs, tokens, context window, temperature, alucinações | ✅ Disponível |
-| 2 | Prompt Engineering | Online | Role, contexto, few-shot, decomposição, structured output | 🔜 Planejada |
-| 3 | IA dentro de aplicações | Online | APIs de LLM, SDKs, streaming, function calling, custos, segurança | 🔜 Planejada |
-| 4 | RAG + Embeddings | Presencial | Embeddings, vector database, chunking, retrieval | 🔜 Planejada |
-| 5 | AI Agents | Presencial | Tools, memory, planejamento, guardrails | 🔜 Planejada |
-| 6 | Projeto Final de IA | Presencial | Hackathon: LLM + Prompt Engineering + API + RAG/Agent | 🔜 Planejada |
+| # | Data | Aula | Formato | Tema | Status |
+|---|------|------|---------|------|--------|
+| 1 | 31/08/2026 | [Fundamentos de IA e LLMs](<Disciplina 1 - Inteligencia Artificial/Aula 01 - Fundamentos de IA e LLMs/README.md>) | Online | IA tradicional x generativa, LLMs, tokens, context window, temperature, alucinações | ✅ Disponível |
+| 2 | 03/09/2026 | Prompt Engineering | Online | Role, contexto, few-shot, decomposição, structured output | 🔜 Planejada |
+| 3 | 10/09/2026 | IA dentro de aplicações | Presencial | APIs de LLM, SDKs, streaming, function calling, custos, segurança | 🔜 Planejada |
+| 4 | 14/09/2026 | RAG + Embeddings | Online | Embeddings, vector database, chunking, retrieval | 🔜 Planejada |
+| 5 | 17/09/2026 | AI Agents | Presencial | Tools, memory, planejamento, guardrails | 🔜 Planejada |
+| 6 | 21/09/2026 | Projeto Final de IA | Online | Hackathon: LLM + Prompt Engineering + API + RAG/Agent | 🔜 Planejada |
 
 ### Disciplina 2 — n8n
 
-| # | Aula | Formato | Tema | Status |
-|---|------|---------|------|--------|
-| 1 | Fundamentos do n8n | Online | Workflow, trigger, node, JSON, expressions, webhooks | 🔜 Planejada |
-| 2 | Integrações e APIs | Online | REST, headers, autenticação, paginação | 🔜 Planejada |
-| 3 | Workflows avançados | Online | IF/Switch, loops, error handling, sub-workflows | 🔜 Planejada |
-| 4 | n8n + IA | Presencial | Classificação, extração e geração de conteúdo com LLM no workflow | 🔜 Planejada |
-| 5 | AI Agents + n8n | Presencial | AI Agent nativo do n8n, tools, memória, guardrails | 🔜 Planejada |
-| 6 | Projeto Final n8n | Presencial | Hackathon: automação real ponta a ponta | 🔜 Planejada |
+| # | Data | Aula | Formato | Tema | Status |
+|---|------|------|---------|------|--------|
+| 1 | 24/09/2026 | Fundamentos do n8n | Presencial | Workflow, trigger, node, JSON, expressions, webhooks | 🔜 Planejada |
+| 2 | 28/09/2026 | Integrações e APIs | Online | REST, headers, autenticação, paginação | 🔜 Planejada |
+| 3 | 01/10/2026 | Workflows avançados | Presencial | IF/Switch, loops, error handling, sub-workflows | 🔜 Planejada |
+| 4 | 05/10/2026 | n8n + IA | Online | Classificação, extração e geração de conteúdo com LLM no workflow | 🔜 Planejada |
+| 5 | 08/10/2026 | AI Agents + n8n | Presencial | AI Agent nativo do n8n, tools, memória, guardrails | 🔜 Planejada |
+| 6 | 22/10/2026 | Projeto Final n8n | Presencial | Hackathon: automação real ponta a ponta | 🔜 Planejada |
 
 **Como usar:** siga as disciplinas e aulas na ordem. Dentro de cada aula,
 siga também as subpastas na ordem numérica — cada uma parte do que você
