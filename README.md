@@ -124,6 +124,13 @@ Por isso, esses arquivos ficam **fora do controle de versão** (listados
 no `.gitignore` como `**/00-resumo-para-slides.md`) — são material de
 apoio de uso meu, não fazem parte do que chega até você por aqui.
 
+Algumas aulas também podem ganhar um `00-exemplo-professor.md` — meu
+aprofundamento pessoal de cada técnica (teoria por trás, armadilhas
+comuns, perguntas frequentes) e exemplos extras além dos que estão no seu
+material, para eu variar em aula ou responder pergunta com mais
+profundidade. Mesmo esquema: local, fora do Git (`**/00-exemplo-professor.md`
+no `.gitignore`).
+
 ## 📚 Grade do curso
 
 ### Disciplina 1 — Inteligência Artificial
@@ -131,7 +138,7 @@ apoio de uso meu, não fazem parte do que chega até você por aqui.
 | # | Data | Aula | Formato | Tema | Status |
 |---|------|------|---------|------|--------|
 | 1 | 31/08/2026 | [Fundamentos de IA e LLMs](<Disciplina 1 - Inteligencia Artificial/Aula 01 - Fundamentos de IA e LLMs/README.md>) | Online | IA tradicional x generativa, LLMs, tokens, context window, temperature, alucinações | ✅ Disponível |
-| 2 | 03/09/2026 | Prompt Engineering | Online | Role, contexto, few-shot, decomposição, structured output | 🔜 Planejada |
+| 2 | 03/09/2026 | [Prompt Engineering](<Disciplina 1 - Inteligencia Artificial/Aula 02 - Prompt Engineering/README.md>) | Online | Role, contexto, few-shot, decomposição, structured output | 🔜 Planejada |
 | 3 | 10/09/2026 | IA dentro de aplicações | Presencial | APIs de LLM, SDKs, streaming, function calling, custos, segurança | 🔜 Planejada |
 | 4 | 14/09/2026 | RAG + Embeddings | Online | Embeddings, vector database, chunking, retrieval | 🔜 Planejada |
 | 5 | 17/09/2026 | AI Agents | Presencial | Tools, memory, planejamento, guardrails | 🔜 Planejada |
