@@ -14,7 +14,6 @@ um formulário automaticamente.
 
 | Pasta | Conteúdo |
 |-------|----------|
-| [00-resumo-para-slides](00-resumo-para-slides.md) | Conteúdo condensado da aula, pronto para gerar uma apresentação (ex.: NotebookLM) — arquivo local, fora do Git (`.gitignore`) |
 | [01-contexto-e-problema-real](01-contexto-e-problema-real/README.md) | Por que colar prompt num chat não escala, e o que muda quando é o código que chama o modelo |
 | [02-conceitos-fundamentais](02-conceitos-fundamentais/README.md) | API key, SDK, estrutura de requisição, tokens e custo, streaming, function/tool calling, entrada multimodal, rate limits, segurança |
 | [03-demonstracao-guiada](03-demonstracao-guiada/README.md) | Eu escrevo código ao vivo: primeira chamada, streaming, function calling, tratamento de erro, leitura de imagem |
