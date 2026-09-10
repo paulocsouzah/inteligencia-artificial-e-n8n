@@ -138,8 +138,8 @@ no `.gitignore`).
 | # | Data | Aula | Formato | Tema | Status |
 |---|------|------|---------|------|--------|
 | 1 | 31/08/2026 | [Fundamentos de IA e LLMs](<Disciplina 1 - Inteligencia Artificial/Aula 01 - Fundamentos de IA e LLMs/README.md>) | Online | IA tradicional x generativa, LLMs, tokens, context window, temperature, alucinações | ✅ Disponível |
-| 2 | 03/09/2026 | [Prompt Engineering](<Disciplina 1 - Inteligencia Artificial/Aula 02 - Prompt Engineering/README.md>) | Online | Role, contexto, few-shot, decomposição, structured output | 🔜 Planejada |
-| 3 | 10/09/2026 | IA dentro de aplicações | Presencial | APIs de LLM, SDKs, streaming, function calling, custos, segurança | 🔜 Planejada |
+| 2 | 03/09/2026 | [Prompt Engineering](<Disciplina 1 - Inteligencia Artificial/Aula 02 - Prompt Engineering/README.md>) | Online | Role, contexto, few-shot, decomposição, structured output | ✅ Disponível |
+| 3 | 10/09/2026 | [IA dentro de aplicações](<Disciplina 1 - Inteligencia Artificial/Aula 03 - IA dentro de Aplicacoes/README.md>) | Presencial | APIs de LLM, SDKs, streaming, function calling, custos, segurança | ✅ Disponível |
 | 4 | 14/09/2026 | RAG + Embeddings | Online | Embeddings, vector database, chunking, retrieval | 🔜 Planejada |
 | 5 | 17/09/2026 | AI Agents | Presencial | Tools, memory, planejamento, guardrails | 🔜 Planejada |
 | 6 | 21/09/2026 | Projeto Final de IA | Online | Hackathon: LLM + Prompt Engineering + API + RAG/Agent | 🔜 Planejada |

@@ -14,11 +14,11 @@ essas capacidades a processos e sistemas reais.
 | # | Aula | Formato | Tema | Status |
 |---|------|---------|------|--------|
 | 1 | [Fundamentos de IA e LLMs](<Aula 01 - Fundamentos de IA e LLMs/README.md>) | Online | IA tradicional x generativa, LLMs, tokens, context window, temperature, alucinações, modelos fechados x open source | ✅ Disponível |
-| 2 | [Prompt Engineering](<Aula 02 - Prompt Engineering/README.md>) | Online | Role, contexto, few-shot, decomposição de problemas, structured output | 🔜 Planejada |
-| 3 | IA dentro de aplicações | Online | APIs de LLM, SDKs, streaming, function/tool calling, custos, rate limits, segurança | 🔜 Planejada |
-| 4 | RAG + Embeddings | Presencial | Embeddings, vector database, similarity search, chunking, retrieval | 🔜 Planejada |
+| 2 | [Prompt Engineering](<Aula 02 - Prompt Engineering/README.md>) | Online | Role, contexto, few-shot, decomposição de problemas, structured output | ✅ Disponível |
+| 3 | [IA dentro de aplicações](<Aula 03 - IA dentro de Aplicacoes/README.md>) | Presencial | APIs de LLM, SDKs, streaming, function/tool calling, custos, rate limits, segurança | ✅ Disponível |
+| 4 | RAG + Embeddings | Online | Embeddings, vector database, similarity search, chunking, retrieval | 🔜 Planejada |
 | 5 | AI Agents | Presencial | LLM x Agent, tools, function calling, memory, planejamento, guardrails | 🔜 Planejada |
-| 6 | Projeto Final de IA | Presencial | Hackathon: LLM + Prompt Engineering + API + Structured Output + RAG ou Agent | 🔜 Planejada |
+| 6 | Projeto Final de IA | Online | Hackathon: LLM + Prompt Engineering + API + Structured Output + RAG ou Agent | 🔜 Planejada |
 
 **Como usar:** siga as aulas na ordem numérica. Dentro de cada aula, siga
 também as subpastas na ordem — cada uma parte do que foi construído na
