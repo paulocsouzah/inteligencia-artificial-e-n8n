@@ -18,7 +18,6 @@ atendimento ao cliente.
 
 | Pasta | Conteúdo |
 |-------|----------|
-| [00-resumo-para-slides](00-resumo-para-slides.md) | Conteúdo condensado da aula, pronto para gerar uma apresentação (ex.: NotebookLM) — arquivo local, fora do Git (`.gitignore`) |
 | [01-contexto-e-problema-real](01-contexto-e-problema-real/README.md) | Por que prompts confiáveis importam: o que quebra quando um pipeline automatizado depende de um prompt vago |
 | [02-conceitos-fundamentais](02-conceitos-fundamentais/README.md) | Anatomia de um prompt, role/persona, contexto, zero-shot x few-shot, decomposição de problemas, structured output |
 | [03-demonstracao-guiada](03-demonstracao-guiada/README.md) | Eu mostro ao vivo cada técnica em ação, comparando com e sem ela |

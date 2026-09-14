@@ -12,7 +12,6 @@ onde ele quebra.
 
 | Pasta | Conteúdo |
 |-------|----------|
-| [00-resumo-para-slides](00-resumo-para-slides.md) | Conteúdo condensado da aula, pronto para gerar uma apresentação (ex.: NotebookLM) — arquivo local, fora do Git (`.gitignore`) |
 | [01-contexto-e-problema-real](01-contexto-e-problema-real/README.md) | Por que este módulo existe: o problema do atendimento manual |
 | [02-conceitos-fundamentais](02-conceitos-fundamentais/README.md) | IA tradicional x generativa, ML x DL, LLMs, tokens, context window, temperature, multimodalidade, alucinações, modelos fechados x open source |
 | [03-demonstracao-guiada](03-demonstracao-guiada/README.md) | Eu mostro ao vivo: tokens, context window, temperature e alucinação na prática |

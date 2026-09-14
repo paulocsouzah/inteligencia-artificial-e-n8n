@@ -16,7 +16,7 @@ essas capacidades a processos e sistemas reais.
 | 1 | [Fundamentos de IA e LLMs](<Aula 01 - Fundamentos de IA e LLMs/README.md>) | Online | IA tradicional x generativa, LLMs, tokens, context window, temperature, alucinações, modelos fechados x open source | ✅ Disponível |
 | 2 | [Prompt Engineering](<Aula 02 - Prompt Engineering/README.md>) | Online | Role, contexto, few-shot, decomposição de problemas, structured output | ✅ Disponível |
 | 3 | [IA dentro de aplicações](<Aula 03 - IA dentro de Aplicacoes/README.md>) | Presencial | APIs de LLM, SDKs, streaming, function/tool calling, custos, rate limits, segurança | ✅ Disponível |
-| 4 | RAG + Embeddings | Online | Embeddings, vector database, similarity search, chunking, retrieval | 🔜 Planejada |
+| 4 | [RAG + Embeddings](<Aula 04 - RAG e Embeddings/README.md>) | Online | Embeddings, vector database, similarity search, chunking, retrieval | ✅ Disponível |
 | 5 | AI Agents | Presencial | LLM x Agent, tools, function calling, memory, planejamento, guardrails | 🔜 Planejada |
 | 6 | Projeto Final de IA | Online | Hackathon: LLM + Prompt Engineering + API + Structured Output + RAG ou Agent | 🔜 Planejada |
 

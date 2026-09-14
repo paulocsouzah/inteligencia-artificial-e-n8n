@@ -1,0 +1,87 @@
+# Variáveis do projeto — VPC + EC2 (reaproveitado da Aula 03 de DevOps) +
+# RDS Postgres com pgvector (adaptado da Aula 04 de DevOps, que usava
+# MySQL). Mesmo padrão de nomes do curso de DevOps, de propósito — é
+# literalmente a mesma infra que vocês já provisionaram, só trocando o
+# banco e a aplicação.
+
+variable "aws_region" {
+  description = "Região AWS onde os recursos serão criados"
+  type        = string
+  default     = "us-east-1"
+}
+
+variable "availability_zone" {
+  description = "Availability Zone onde a subnet pública (EC2) será criada"
+  type        = string
+  default     = "us-east-1a"
+}
+
+variable "availability_zone_b" {
+  description = "Segunda Availability Zone, usada pela subnet privada do RDS (precisa ser diferente da AZ da subnet pública)"
+  type        = string
+  default     = "us-east-1b"
+}
+
+variable "vpc_cidr" {
+  description = "Faixa de IPs (CIDR) da VPC"
+  type        = string
+  default     = "10.0.0.0/16"
+}
+
+variable "public_subnet_cidr" {
+  description = "Faixa de IPs (CIDR) da subnet pública"
+  type        = string
+  default     = "10.0.1.0/24"
+}
+
+variable "private_subnet_cidr" {
+  description = "Faixa de IPs (CIDR) da subnet privada, onde o RDS mora"
+  type        = string
+  default     = "10.0.2.0/24"
+}
+
+variable "project_name" {
+  description = "Prefixo usado no nome/tags de todos os recursos deste projeto"
+  type        = string
+  default     = "aula04-rag"
+}
+
+variable "my_ip" {
+  description = "Seu IP público, usado para restringir o acesso SSH (defina em terraform.tfvars)"
+  type        = string
+}
+
+variable "db_name" {
+  description = "Nome do banco de dados (schema) criado dentro da instância RDS"
+  type        = string
+  default     = "rag_aula04"
+}
+
+variable "db_username" {
+  description = "Usuário administrador do RDS"
+  type        = string
+  default     = "ragadmin"
+}
+
+variable "db_password" {
+  description = "Senha do usuário administrador do RDS (defina em terraform.tfvars, nunca aqui)"
+  type        = string
+  sensitive   = true
+}
+
+variable "db_engine_version" {
+  description = "Versão do PostgreSQL — precisa ser >= 15.2 para suportar a extensão pgvector nativamente. Confira com `aws rds describe-db-engine-versions --engine postgres` quais versões estão disponíveis na sua conta/região antes do apply, essa lista muda com o tempo."
+  type        = string
+  default     = "16.15"
+}
+
+variable "app_repo_url" {
+  description = "URL HTTPS do repositório Git da aplicação (assets/app desta aula), clonado pelo user_data"
+  type        = string
+}
+
+variable "openai_api_key" {
+  description = "API key da OpenAI, usada pela aplicação para gerar embeddings e respostas (defina em terraform.tfvars, nunca aqui)"
+  type        = string
+  sensitive   = true
+}

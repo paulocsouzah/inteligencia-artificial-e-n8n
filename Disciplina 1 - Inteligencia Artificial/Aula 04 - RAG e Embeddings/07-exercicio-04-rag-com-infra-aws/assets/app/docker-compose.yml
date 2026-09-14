@@ -1,0 +1,23 @@
+# Sem servico de banco: o banco e o RDS, externo ao container. As
+# credenciais chegam via variaveis de ambiente (arquivo ".env", gerado
+# automaticamente pelo user_data do Terraform com o endpoint do RDS —
+# mesmo padrao usado no app-aula03 do curso de DevOps).
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+
+# Para executar (com um .env preenchido nesta mesma pasta):
+#   docker compose up -d --build
+# Para popular o banco (uma vez, antes de usar o chatbot):
+#   docker compose exec app node seed.js
+# Para parar:
+#   docker compose down
