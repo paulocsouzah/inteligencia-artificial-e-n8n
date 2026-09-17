@@ -59,4 +59,4 @@ consolidando os exercícios anteriores. A entrega inclui **código-fonte**,
 além do relatório em PDF — os detalhes de entrega e a rubrica estão no
 próprio módulo.
 
-**Próxima aula:** Aula 05 — AI Agents *(em breve)*.
+**Próxima aula:** [Aula 05 — AI Agents](<../Aula 05 - AI Agents/README.md>).

@@ -16,7 +16,7 @@ data "aws_iam_instance_profile" "lab_profile" {
 
 # Key pair já existente na AWS Academy ("vockey") — baixe o
 # "vockey.pem" pela tela do Learner Lab (seção "SSH key" > Download PEM)
-# antes do apply, mesmo procedimento do curso de DevOps.
+# antes do apply, mesmo procedimento das aulas anteriores.
 data "aws_key_pair" "vockey" {
   key_name = "vockey"
 }

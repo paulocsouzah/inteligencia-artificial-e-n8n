@@ -1,0 +1,7 @@
+# Copie este arquivo para "terraform.tfvars" (que fica fora do Git,
+# veja o .gitignore) e preencha com seus próprios valores.
+
+my_ip           = "SEU_IP_PUBLICO_AQUI"       # descubra em https://www.meuip.com.br/
+db_password     = "escolha-uma-senha-forte"
+openai_api_key  = "sk-proj-..."
+app_repo_url    = "https://github.com/seu-usuario/agente-aula05-app.git"
