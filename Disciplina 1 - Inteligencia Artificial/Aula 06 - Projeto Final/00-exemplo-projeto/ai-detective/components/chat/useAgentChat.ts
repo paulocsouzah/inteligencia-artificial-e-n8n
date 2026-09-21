@@ -3,6 +3,7 @@
 import { useCallback, useRef, useState } from "react";
 import type { Accusation, AgentStep, ChatMessageInput } from "@/types";
 import { formatAccusation } from "./formatAccusation";
+import { newId } from "./newId";
 
 export interface UIMessage {
   id: string;
@@ -40,14 +41,8 @@ export function useAgentChat() {
     busyRef.current = true;
     setIsStreaming(true);
     setError(null);
-    sessionRef.current ??= crypto.randomUUID();
 
-    const assistantId = crypto.randomUUID();
-    setMessages((prev) => [
-      ...prev,
-      { id: crypto.randomUUID(), role: "user", content: trimmed },
-      { id: assistantId, role: "assistant", content: "" },
-    ]);
+    const assistantId = newId();
     const patchAssistant = (patch: Partial<UIMessage>) =>
       setMessages((prev) => prev.map((m) => (m.id === assistantId ? { ...m, ...patch } : m)));
 
@@ -55,7 +50,15 @@ export function useAgentChat() {
     historyRef.current = nextHistory;
     let assistantText = "";
 
+    // Tudo abaixo fica dentro do try/finally: se algo falhar, o finally SEMPRE libera a tela.
     try {
+      sessionRef.current ??= newId();
+      setMessages((prev) => [
+        ...prev,
+        { id: newId(), role: "user", content: trimmed },
+        { id: assistantId, role: "assistant", content: "" },
+      ]);
+
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

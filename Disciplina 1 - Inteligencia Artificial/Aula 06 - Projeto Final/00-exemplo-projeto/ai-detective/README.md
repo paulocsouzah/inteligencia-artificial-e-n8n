@@ -334,6 +334,7 @@ Eu deixei estas limitações à mostra de propósito — são ótimos pontos de 
 | `port is already allocated` ao subir o banco | Algo já usa a porta 5432. Mude `DB_PORT` no `.env` e rode `npm run db:up` de novo |
 | `Arquivo … não encontrado. Rode antes: npm run seed-case` | Rode `npm run setup` (ele faz o `seed-case` antes do `ingest`) |
 | O agente responde "não é possível concluir" para tudo | Nenhum trecho passou do `minScore`, ou o banco está vazio. Rode `npm run ingest -- --force` |
+| Na AWS a página abre, mas o chat fica em "investigando…" e nada aparece | O navegador desliga `crypto.randomUUID()` em HTTP puro. Use `newId()` (`components/chat/newId.ts`) e teste sempre pelo `http://<ip>`, não só pelo `localhost` |
 | Na AWS, o IP abre mas fica carregando | Confira se digitou `http://` (e não `https://`) e veja o log do cloud-init |
 
 ---

@@ -88,7 +88,7 @@ Do que eu vi rodando o mesmo Terraform:
 - O `terraform destroy` também espera o RDS ser removido — não
   interrompa no meio, senão sobram recursos ligados na sua conta.
 
-## ⚠️ Três armadilhas
+## ⚠️ Quatro armadilhas
 
 **1. Abra o IP com `http://` na frente.** Colar só o IP na barra do
 navegador faz muitos navegadores tentarem `https://`. Como o projeto
@@ -111,6 +111,13 @@ chave de API**, e o gasto é seu. Por isso:
 **3. Learner Lab tem prazo e orçamento.** A sessão do laboratório
 expira, e os recursos param ou somem com ela. Não conte que a infra
 vai estar de pé quando eu for avaliar — por isso, veja a próxima seção.
+
+**4. Algumas funções do navegador só existem em HTTPS.** Como o projeto é servido por `http://<ip>`,
+o navegador o trata como "contexto inseguro" e **desliga** APIs como `crypto.randomUUID()`, a área de
+transferência e a geolocalização. Na primeira versão do AI Detective, isso travava o chat na AWS: tudo
+funcionava no `localhost` (que é considerado seguro) e na EC2 a tela ficava em "investigando…" para
+sempre. Foi por isso que o projeto tem `components/chat/newId.ts`, que usa `crypto.getRandomValues`
+(essa funciona em qualquer contexto). **Teste o seu projeto pelo IP da EC2, não só no `localhost`.**
 
 ## 📸 Como provar que funcionou
 
