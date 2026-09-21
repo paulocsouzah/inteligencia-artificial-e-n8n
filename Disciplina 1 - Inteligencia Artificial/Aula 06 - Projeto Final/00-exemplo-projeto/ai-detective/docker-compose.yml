@@ -1,0 +1,50 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Dois jeitos de usar este arquivo — o código do app é o mesmo nos dois:
+#
+# 1) DESENVOLVIMENTO LOCAL (o mais comum): só o banco roda no Docker.
+#      npm run db:up        # sobe o Postgres + pgvector (perfil "local")
+#      npm run setup        # gera as evidências e indexa no banco (RAG)
+#      npm run dev          # o app roda direto na sua máquina
+#
+# 2) AWS (EC2 + RDS): o app roda em container e o banco é o RDS, fora do Docker.
+#      docker compose up -d --build app      # o perfil "local" NÃO sobe, logo não cria banco
+#    O Terraform (pasta terraform/) faz exatamente isso pela EC2. Ver o README.
+#
+# As variáveis vêm do arquivo .env (o Docker Compose lê o .env desta pasta).
+# ─────────────────────────────────────────────────────────────────────────────
+services:
+  db:
+    image: pgvector/pgvector:pg16      # Postgres 16 com a extensão pgvector já instalada
+    profiles: ["local"]                # só sobe com --profile local
+    environment:
+      POSTGRES_DB: ${DB_NAME:-ai_detective}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data   # os dados sobrevivem a "docker compose down"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-ai_detective}"]
+      interval: 3s
+      retries: 20
+
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_NAME: ${DB_NAME:-ai_detective}
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_SSL: ${DB_SSL:-false}
+    volumes:
+      - evidence:/app/evidence     # PDFs/imagens (e uploads) sobrevivem a recriar o container
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  evidence:

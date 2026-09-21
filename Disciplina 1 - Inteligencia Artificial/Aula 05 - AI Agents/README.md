@@ -72,4 +72,4 @@ consolidando os exercícios anteriores. A entrega inclui **código-fonte**,
 além do relatório em PDF — os detalhes de entrega e a rubrica estão no
 próprio módulo.
 
-**Próxima aula:** Aula 06 — Projeto Final de IA *(em breve)*.
+**Próxima aula:** [Aula 06 — Projeto Final de IA](<../Aula 06 - Projeto Final/README.md>).

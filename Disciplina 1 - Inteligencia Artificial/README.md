@@ -18,7 +18,7 @@ essas capacidades a processos e sistemas reais.
 | 3 | [IA dentro de aplicações](<Aula 03 - IA dentro de Aplicacoes/README.md>) | Presencial | APIs de LLM, SDKs, streaming, function/tool calling, custos, rate limits, segurança | ✅ Disponível |
 | 4 | [RAG + Embeddings](<Aula 04 - RAG e Embeddings/README.md>) | Online | Embeddings, vector database, similarity search, chunking, retrieval | ✅ Disponível |
 | 5 | [AI Agents](<Aula 05 - AI Agents/README.md>) | Presencial | LLM x Agent, tools, function calling, memory, planejamento, guardrails | ✅ Disponível |
-| 6 | Projeto Final de IA | Online | Hackathon: LLM + Prompt Engineering + API + Structured Output + RAG ou Agent | 🔜 Planejada |
+| 6 | [Projeto Final de IA](<Aula 06 - Projeto Final/README.md>) | Online | Projeto em dupla/trio: LLM + Prompt Engineering + API + Structured Output + RAG ou Agent (AWS opcional) | ✅ Disponível |
 
 **Como usar:** siga as aulas na ordem numérica. Dentro de cada aula, siga
 também as subpastas na ordem — cada uma parte do que foi construído na

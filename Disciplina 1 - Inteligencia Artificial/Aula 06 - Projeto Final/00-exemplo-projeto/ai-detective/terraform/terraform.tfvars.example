@@ -1,0 +1,11 @@
+# Copie este arquivo para "terraform.tfvars" (ele fica fora do Git — veja o .gitignore)
+# e preencha com os SEUS valores.
+
+my_ip          = "SEU_IP_PUBLICO_AQUI"          # descubra em https://www.meuip.com.br/ — libera o SSH só para você
+db_password    = "escolha-uma-senha-forte"
+openai_api_key = "sk-proj-..."
+app_repo_url   = "https://github.com/seu-usuario/seu-repositorio.git"   # precisa ser PÚBLICO
+
+# Só se o projeto NÃO estiver na raiz do repositório, ou se estiver numa branch:
+# app_subdir   = "ai-detective"
+# app_branch   = "main"

@@ -81,8 +81,9 @@ usei no curso de DevOps. Eu olho para:
   decisões técnicas que você tomou e o impacto delas no negócio.
 
 Os dois **projetos finais** (Aula 06 de cada disciplina) fogem desse
-padrão: são hackathons que eu avalio ao vivo, sem relatório em PDF — os
-detalhes ficam no próprio módulo, quando eu o construir.
+padrão: são projetos em equipe, sem relatório em PDF — na disciplina de
+IA, você entrega o link do repositório no GitHub. Os detalhes ficam no
+próprio módulo de cada aula.
 
 ---
 
@@ -96,7 +97,7 @@ inteligencia-artificial-e-n8n/
 │   ├── Aula 03 - IA dentro de Aplicacoes/
 │   ├── Aula 04 - RAG e Embeddings/
 │   ├── Aula 05 - AI Agents/
-│   └── Aula 06 - Projeto Final de IA/
+│   └── Aula 06 - Projeto Final/
 └── Disciplina 2 - n8n/
     ├── Aula 01 - Fundamentos do n8n/
     ├── Aula 02 - Integracoes e APIs/
@@ -142,7 +143,7 @@ no `.gitignore`).
 | 3 | 10/09/2026 | [IA dentro de aplicações](<Disciplina 1 - Inteligencia Artificial/Aula 03 - IA dentro de Aplicacoes/README.md>) | Presencial | APIs de LLM, SDKs, streaming, function calling, custos, segurança | ✅ Disponível |
 | 4 | 14/09/2026 | [RAG + Embeddings](<Disciplina 1 - Inteligencia Artificial/Aula 04 - RAG e Embeddings/README.md>) | Online | Embeddings, vector database, chunking, retrieval | ✅ Disponível |
 | 5 | 17/09/2026 | [AI Agents](<Disciplina 1 - Inteligencia Artificial/Aula 05 - AI Agents/README.md>) | Presencial | Tools, memory, planejamento, guardrails | ✅ Disponível |
-| 6 | 21/09/2026 | Projeto Final de IA | Online | Hackathon: LLM + Prompt Engineering + API + RAG/Agent | 🔜 Planejada |
+| 6 | 21/09/2026 | [Projeto Final de IA](<Disciplina 1 - Inteligencia Artificial/Aula 06 - Projeto Final/README.md>) | Online | Projeto em dupla/trio: LLM + Prompt Engineering + API + Structured Output + RAG/Agent (AWS opcional) | ✅ Disponível |
 
 ### Disciplina 2 — n8n
 
