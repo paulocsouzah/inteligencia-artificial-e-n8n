@@ -1,0 +1,203 @@
+{
+  "id": "nsT39JAmBqF1Dw5K",
+  "name": "Aula 01 - Ex 04 - Desafio: validar o e-mail (gabarito)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "solicitacao-validada",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "6661a6aa-8a1e-47d9-b8b6-e0f57d5f0d59",
+      "name": "Webhook",
+      "webhookId": "f13a2e50-aacd-4a7c-8fcf-143c5eb32050"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "fdafb15e-96c5-4f8b-b6ed-5d9becba21f2",
+              "leftValue": "={{ $json.body.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        240,
+        0
+      ],
+      "id": "27bec07b-c667-4b9e-828e-9c3ccd24122b",
+      "name": "E-mail informado?"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "753b7095-3ced-4075-be8a-a2c0065d72a4",
+              "name": "protocolo",
+              "value": "=SAC-{{ $now.toFormat('yyyyLLdd') }}-{{ $execution.id }}",
+              "type": "string"
+            },
+            {
+              "id": "aed1f148-b9e5-4221-8622-0c1b1ff6a194",
+              "name": "nome",
+              "value": "={{ $json.body.nome.trim() }}",
+              "type": "string"
+            },
+            {
+              "id": "abf2ffb6-e14e-4bd9-bbdb-b72092d6264c",
+              "name": "email",
+              "value": "={{ $json.body.email.trim().toLowerCase() }}",
+              "type": "string"
+            },
+            {
+              "id": "2253f100-6441-4b04-851b-bc2d83d23200",
+              "name": "canal",
+              "value": "={{ $json.body.canal || 'formulario' }}",
+              "type": "string"
+            },
+            {
+              "id": "75e8236d-48cb-4356-b509-11207fc85bce",
+              "name": "mensagem",
+              "value": "={{ $json.body.mensagem.trim() }}",
+              "type": "string"
+            },
+            {
+              "id": "a074aed5-9636-4105-9085-efc96c3bcde2",
+              "name": "tamanho_mensagem",
+              "value": "={{ $json.body.mensagem.trim().length }}",
+              "type": "number"
+            },
+            {
+              "id": "c7bbac4e-9726-4e35-9b4d-6d26ca775048",
+              "name": "recebido_em",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "8b841f5b-43cc-42c1-b049-718c3d650853",
+              "name": "status",
+              "value": "recebida",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        500,
+        -120
+      ],
+      "id": "f9f4b434-7047-4db4-a35c-43ab6b644539",
+      "name": "Normalizar e protocolar"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { protocolo: $json.protocolo, status: $json.status, recebido_em: $json.recebido_em, aviso: 'Recebemos sua solicitação, ' + $json.nome.split(' ')[0] + '. Guarde o protocolo.' } }}",
+        "options": {
+          "responseCode": 201
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        740,
+        -120
+      ],
+      "id": "d1cc3007-53aa-41d0-96e3-0f475b764520",
+      "name": "Responder 201"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { erro: 'O campo email é obrigatório.' } }}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        500,
+        120
+      ],
+      "id": "8d3b9159-5c1e-47de-9591-60f75d59f9b9",
+      "name": "Responder 400"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "E-mail informado?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "E-mail informado?": {
+      "main": [
+        [
+          {
+            "node": "Normalizar e protocolar",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Responder 400",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizar e protocolar": {
+      "main": [
+        [
+          {
+            "node": "Responder 201",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}

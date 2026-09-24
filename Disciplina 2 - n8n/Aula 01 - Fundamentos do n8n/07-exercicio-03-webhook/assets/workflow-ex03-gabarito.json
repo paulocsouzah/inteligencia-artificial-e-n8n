@@ -1,0 +1,98 @@
+{
+  "id": "EPCr990RtoreVy0x",
+  "name": "Aula 01 - Ex 03 - Meu primeiro webhook (gabarito)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "atendimento",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "9d871a6f-cf94-458d-9463-713d73a17860",
+      "name": "Webhook",
+      "webhookId": "f756b7b7-23da-456d-8677-b5ace266781f"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "63698870-fe51-4fed-a699-1e7e88217a1b",
+              "name": "nome",
+              "value": "={{ $json.body.nome }}",
+              "type": "string"
+            },
+            {
+              "id": "238d5f43-dbaa-45e6-9113-68bfea58fc03",
+              "name": "mensagem",
+              "value": "={{ $json.body.mensagem }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        0
+      ],
+      "id": "5e04d043-e196-45c8-9796-61aafa56e4ec",
+      "name": "Ler o corpo"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { ok: true, recebi_de: $json.nome, tamanho_da_mensagem: $json.mensagem.length } }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        480,
+        0
+      ],
+      "id": "2b503103-6cd9-4347-a807-6a523093c14d",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Ler o corpo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ler o corpo": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}

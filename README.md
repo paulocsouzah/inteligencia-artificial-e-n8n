@@ -113,7 +113,7 @@ seu próprio `README.md` — o mesmo padrão do curso de DevOps.
 
 ### 📑 Resumo para slides (uso interno meu)
 
-Toda aula que eu crio ganha também um arquivo `00-resumo-para-slides.md`
+Toda aula que eu crio ganha também um arquivo `00-resumo-para-slides.pdf`
 na raiz da própria pasta da aula — um resumo condensado (conceitos,
 definições, exemplos-chave e uma sugestão de estrutura de slides) que eu
 uso para gerar a apresentação da aula em ferramentas como o **NotebookLM**.
@@ -122,8 +122,10 @@ tabelas de entrega e passo a passo; o resumo é só o meu rascunho de
 preparação de aula.
 
 Por isso, esses arquivos ficam **fora do controle de versão** (listados
-no `.gitignore` como `**/00-resumo-para-slides.md`) — são material de
-apoio de uso meu, não fazem parte do que chega até você por aqui.
+no `.gitignore` como `**/00-resumo-para-slides.pdf`) — são material de
+apoio de uso meu, não fazem parte do que chega até você por aqui. (As
+primeiras aulas foram feitas em Markdown, `00-resumo-para-slides.md`, que
+continua ignorado da mesma forma.)
 
 Algumas aulas também podem ganhar um `00-exemplo-professor.md` — meu
 aprofundamento pessoal de cada técnica (teoria por trás, armadilhas
@@ -149,7 +151,7 @@ no `.gitignore`).
 
 | # | Data | Aula | Formato | Tema | Status |
 |---|------|------|---------|------|--------|
-| 1 | 24/09/2026 | Fundamentos do n8n | Presencial | Workflow, trigger, node, JSON, expressions, webhooks | 🔜 Planejada |
+| 1 | 24/09/2026 | [Fundamentos do n8n](<Disciplina 2 - n8n/Aula 01 - Fundamentos do n8n/README.md>) | Presencial | Workflow, trigger, node, JSON, expressions, webhooks — e o n8n no ar na sua EC2, com Terraform | ✅ Disponível |
 | 2 | 28/09/2026 | Integrações e APIs | Online | REST, headers, autenticação, paginação | 🔜 Planejada |
 | 3 | 01/10/2026 | Workflows avançados | Presencial | IF/Switch, loops, error handling, sub-workflows | 🔜 Planejada |
 | 4 | 05/10/2026 | n8n + IA | Online | Classificação, extração e geração de conteúdo com LLM no workflow | 🔜 Planejada |

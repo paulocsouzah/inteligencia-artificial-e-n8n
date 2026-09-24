@@ -1,8 +1,12 @@
 # Resumos condensados para gerar slides (NotebookLM) — uso local, não versionado
 **/00-resumo-para-slides.md
+**/00-resumo-para-slides.pdf
 
 # Material de aprofundamento do professor (exemplos extras, teoria) — uso local, não versionado
 **/00-exemplo-professor.md
 
 # PDFs gerados a partir dos resumos para slides — mesma lógica acima, uso local
 Aula*-ResumoParaSlides.pdf
+
+# Ferramentas locais do professor (conversor Markdown -> PDF dos resumos) — uso local, não versionado
+.ferramentas/
