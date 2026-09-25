@@ -1,0 +1,108 @@
+{
+  "name": "Aula 01 - Ex 01 - Primeiro workflow",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "94864d90-e41a-4062-87f1-7797f59425ad",
+      "name": "Manual Trigger"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5ccb3461-20f6-4e20-b596-b44ac48d3135",
+              "name": "cliente",
+              "value": "Maria Souza",
+              "type": "string"
+            },
+            {
+              "id": "71fd5bcb-85a7-4c37-a459-ecc9884f14b3",
+              "name": "canal",
+              "value": "whatsapp",
+              "type": "string"
+            },
+            {
+              "id": "2e3350ab-a19e-44b4-9543-55d32f6c3103",
+              "name": "mensagem",
+              "value": "Meu pedido 4521 ainda não chegou",
+              "type": "string"
+            },
+            {
+              "id": "d3868706-9ab6-42a4-ac95-f797373ec806",
+              "name": "recebido_em",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        0
+      ],
+      "id": "876a4258-b48e-4685-b687-9d9e0e3ed304",
+      "name": "Montar mensagem"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        180
+      ],
+      "id": "60f2d80c-8b93-424c-a9ae-326d0e6f8968",
+      "name": "Schedule Trigger"
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Montar mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Montar mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "pinData": {},
+  "meta": null,
+  "active": false
+}

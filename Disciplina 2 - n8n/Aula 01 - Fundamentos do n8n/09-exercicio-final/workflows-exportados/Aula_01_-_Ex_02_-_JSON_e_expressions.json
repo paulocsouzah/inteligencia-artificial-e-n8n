@@ -1,0 +1,112 @@
+{
+  "name": "Aula 01 - Ex 02 - JSON e expressions",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "69861d85-5118-4255-b614-1a03c8ae30f8",
+      "name": "Manual Trigger"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Devolvo 3 clientes \"sujos\" — do jeito que chegam de um formulário de verdade:\n// espaços sobrando, e-mail com maiúsculas, mensagens de tamanhos diferentes.\nreturn [\n  { json: { nome: \"  Maria Souza \", email: \"MARIA.SOUZA@Gmail.com\", pedidos: 14, mensagem: \"Meu pedido 4521 ainda não chegou e já passou do prazo combinado.\" } },\n  { json: { nome: \"João Pereira\", email: \"joao@empresa.com.br\", pedidos: 2, mensagem: \"Quero trocar o tamanho.\" } },\n  { json: { nome: \"Ana Lima\", email: \"Ana.Lima@Outlook.com\", pedidos: 31, mensagem: \"Cobrança duplicada no cartão.\" } }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ],
+      "id": "e080d002-64dc-402b-b4a4-02ff5e518130",
+      "name": "Gerar clientes"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0dbabaa5-264b-43c7-8fe0-26156dc7e872",
+              "name": "nome",
+              "value": "={{ $json.nome.trim() }}",
+              "type": "string"
+            },
+            {
+              "id": "ce4d4407-3750-40b5-b4f7-081ab2a403c0",
+              "name": "email",
+              "value": "={{ $json.email.trim().toLowerCase() }}",
+              "type": "string"
+            },
+            {
+              "id": "9a1658ce-c179-433f-ab86-9afa0c175a07",
+              "name": "dominio",
+              "value": "={{ $json.email.split('@')[1].toLowerCase() }}",
+              "type": "string"
+            },
+            {
+              "id": "7bbde7a1-0b77-42c3-8a45-b373a6c4b607",
+              "name": "iniciais",
+              "value": "={{ $json.nome.trim().split(' ').map(p => p[0].toUpperCase()).join('') }}",
+              "type": "string"
+            },
+            {
+              "id": "99e80604-48b7-4940-bc6a-35adbc9eb786",
+              "name": "cliente_vip",
+              "value": "={{ $json.pedidos >= 10 }}",
+              "type": "boolean"
+            },
+            {
+              "id": "5182093a-e54e-471a-9c9c-0272e4d2c9af",
+              "name": "resumo",
+              "value": "={{ $json.mensagem.length > 30 ? $json.mensagem.slice(0, 30) + '...' : $json.mensagem }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        480,
+        0
+      ],
+      "id": "d18607d7-2c91-4e95-95fe-b9e72fe36b85",
+      "name": "Limpar dados"
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Gerar clientes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gerar clientes": {
+      "main": [
+        [
+          {
+            "node": "Limpar dados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": null,
+  "meta": null,
+  "active": false
+}
