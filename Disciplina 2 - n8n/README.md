@@ -37,9 +37,9 @@ com os dados sob controle.
 |---|------|---------|------|--------|
 | 1 | [Fundamentos do n8n](<Aula 01 - Fundamentos do n8n/README.md>) | Presencial | Workflow, trigger, node, JSON, expressions, webhooks — e o n8n no ar na sua EC2 | ✅ Disponível |
 | 2 | [Integrações reais e IA no fluxo](<Aula 02 - Integrações Reais e IA no n8n/README.md>) | Online | REST, headers, autenticação (API Key, Bearer, OAuth2), paginação — e uma IA de verdade lendo e-mail e respondendo pelo Gmail | ✅ Disponível |
-| 3 | Workflows avançados e IA com rede de proteção | Presencial | IF/Switch, loops, error handling, sub-workflows — e como blindar uma chamada de IA (retry, custo, timeout, validação da saída) | 🔜 Planejada |
+| 3 | Workflows avançados e IA com rede de proteção | Online | IF/Switch, loops, error handling, sub-workflows — e como blindar uma chamada de IA (retry, custo, timeout, validação da saída) | 🔜 Planejada |
 | 4 | IA aprofundada no n8n | Online | Extração estruturada em múltiplas etapas, RAG conectado ao workflow, roteamento por intenção entre vários fluxos | 🔜 Planejada |
-| 5 | AI Agents + n8n | Presencial | AI Agent nativo do n8n, tools, memória, guardrails | 🔜 Planejada |
+| 5 | AI Agents + n8n | Online | AI Agent nativo do n8n, tools, memória, guardrails | 🔜 Planejada |
 | 6 | Projeto Final n8n | Presencial | Hackathon: automação real ponta a ponta | 🔜 Planejada |
 
 > 📝 **Nota de percurso (turma 2026):** depois da Aula 01, a turma já chegou

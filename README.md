@@ -153,9 +153,9 @@ no `.gitignore`).
 |---|------|------|---------|------|--------|
 | 1 | 24/09/2026 | [Fundamentos do n8n](<Disciplina 2 - n8n/Aula 01 - Fundamentos do n8n/README.md>) | Presencial | Workflow, trigger, node, JSON, expressions, webhooks — e o n8n no ar na sua EC2, com Terraform | ✅ Disponível |
 | 2 | 28/09/2026 | [Integrações reais e IA no fluxo](<Disciplina 2 - n8n/Aula 02 - Integrações Reais e IA no n8n/README.md>) | Online | REST, headers, autenticação (API Key, Bearer, OAuth2), paginação — e uma IA de verdade lendo e-mail e respondendo pelo Gmail | ✅ Disponível |
-| 3 | 01/10/2026 | Workflows avançados e IA com rede de proteção | Presencial | IF/Switch, loops, error handling, sub-workflows — e como blindar uma chamada de IA (retry, custo, timeout, validação da saída) | 🔜 Planejada |
+| 3 | 01/10/2026 | Workflows avançados e IA com rede de proteção | Online | IF/Switch, loops, error handling, sub-workflows — e como blindar uma chamada de IA (retry, custo, timeout, validação da saída) | 🔜 Planejada |
 | 4 | 05/10/2026 | IA aprofundada no n8n | Online | Extração estruturada em múltiplas etapas, RAG conectado ao workflow, roteamento por intenção entre vários fluxos | 🔜 Planejada |
-| 5 | 08/10/2026 | AI Agents + n8n | Presencial | AI Agent nativo do n8n, tools, memória, guardrails | 🔜 Planejada |
+| 5 | 08/10/2026 | AI Agents + n8n | Online | AI Agent nativo do n8n, tools, memória, guardrails | 🔜 Planejada |
 | 6 | 22/10/2026 | Projeto Final n8n | Presencial | Hackathon: automação real ponta a ponta | 🔜 Planejada |
 
 **Como usar:** siga as disciplinas e aulas na ordem. Dentro de cada aula,
