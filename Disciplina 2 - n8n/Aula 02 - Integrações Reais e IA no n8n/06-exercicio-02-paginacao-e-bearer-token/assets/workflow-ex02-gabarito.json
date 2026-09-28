@@ -1,0 +1,84 @@
+{
+  "id": "aula02ex02gab001",
+  "name": "Aula 02 - Ex 02 - Paginação e Bearer Token (gabarito)",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [0, 0],
+      "id": "b2a1c2d3-0002-4a1a-9a1a-000000000001",
+      "name": "Manual Trigger"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://api.github.com/orgs/n8n-io/repos",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "per_page", "value": "10" }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [240, -120],
+      "id": "b2a1c2d3-0002-4a1a-9a1a-000000000002",
+      "name": "Parte A - Repos com Bearer Token",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_ME",
+          "name": "GitHub Bearer Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://rickandmortyapi.com/api/character",
+        "options": {
+          "pagination": {
+            "pagination": {
+              "paginationMode": "responseContainsNextURL",
+              "nextURL": "={{ $response.body.info.next }}",
+              "limitPagesFetched": true,
+              "maxRequests": 3
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [240, 120],
+      "id": "b2a1c2d3-0002-4a1a-9a1a-000000000003",
+      "name": "Parte B - Personagens paginados"
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Parte A - Repos com Bearer Token",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Parte B - Personagens paginados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}

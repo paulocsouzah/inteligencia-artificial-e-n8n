@@ -1,0 +1,61 @@
+{
+  "id": "aula02ex01gab001",
+  "name": "Aula 02 - Ex 01 - Consumindo uma API pública (gabarito)",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [0, 0],
+      "id": "b1a1c2d3-0001-4a1a-9a1a-000000000001",
+      "name": "Manual Trigger"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://api.nasa.gov/planetary/apod",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "api_key",
+              "value": ""
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [240, 0],
+      "id": "b1a1c2d3-0001-4a1a-9a1a-000000000002",
+      "name": "APOD (com credencial)",
+      "credentials": {
+        "httpQueryAuth": {
+          "id": "REPLACE_ME",
+          "name": "NASA API Key"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "APOD (com credencial)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}

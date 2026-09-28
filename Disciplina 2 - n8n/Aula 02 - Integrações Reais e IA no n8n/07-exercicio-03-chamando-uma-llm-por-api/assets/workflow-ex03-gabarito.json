@@ -1,0 +1,95 @@
+{
+  "id": "aula02ex03gab001",
+  "name": "Aula 02 - Ex 03 - Chamando uma LLM por API (gabarito)",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [0, 0],
+      "id": "b3a1c2d3-0003-4a1a-9a1a-000000000001",
+      "name": "Manual Trigger"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d1111111-1111-4111-8111-111111111111",
+              "name": "mensagem_cliente",
+              "value": "Comprei um produto errado por engano, preciso trocar, mas já faz uma semana e ninguém respondeu meu e-mail anterior.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [240, 0],
+      "id": "b3a1c2d3-0003-4a1a-9a1a-000000000002",
+      "name": "Mensagem do cliente"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'gpt-4o-mini', messages: [ { role: 'system', content: 'Classifique a mensagem do cliente e responda em JSON com categoria (troca, duvida, elogio, reclamacao), prioridade (baixa, media, alta), sentimento (positivo, neutro, negativo) e resposta_sugerida.' }, { role: 'user', content: $json.mensagem_cliente } ], response_format: { type: 'json_object' } }) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [480, 0],
+      "id": "b3a1c2d3-0003-4a1a-9a1a-000000000003",
+      "name": "Chamar a LLM (HTTP Request)",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_ME",
+          "name": "LLM Bearer Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const dados = JSON.parse($input.item.json.choices[0].message.content);\nreturn { json: dados };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [720, 0],
+      "id": "b3a1c2d3-0003-4a1a-9a1a-000000000004",
+      "name": "JSON.parse da resposta"
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          { "node": "Mensagem do cliente", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Mensagem do cliente": {
+      "main": [
+        [
+          { "node": "Chamar a LLM (HTTP Request)", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Chamar a LLM (HTTP Request)": {
+      "main": [
+        [
+          { "node": "JSON.parse da resposta", "type": "main", "index": 0 }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}

@@ -36,11 +36,19 @@ com os dados sob controle.
 | # | Aula | Formato | Tema | Status |
 |---|------|---------|------|--------|
 | 1 | [Fundamentos do n8n](<Aula 01 - Fundamentos do n8n/README.md>) | Presencial | Workflow, trigger, node, JSON, expressions, webhooks — e o n8n no ar na sua EC2 | ✅ Disponível |
-| 2 | Integrações e APIs | Online | REST, headers, autenticação, paginação | 🔜 Planejada |
-| 3 | Workflows avançados | Presencial | IF/Switch, loops, error handling, sub-workflows | 🔜 Planejada |
-| 4 | n8n + IA | Online | Classificação, extração e geração de conteúdo com LLM no workflow | 🔜 Planejada |
+| 2 | [Integrações reais e IA no fluxo](<Aula 02 - Integrações Reais e IA no n8n/README.md>) | Online | REST, headers, autenticação (API Key, Bearer, OAuth2), paginação — e uma IA de verdade lendo e-mail e respondendo pelo Gmail | ✅ Disponível |
+| 3 | Workflows avançados e IA com rede de proteção | Presencial | IF/Switch, loops, error handling, sub-workflows — e como blindar uma chamada de IA (retry, custo, timeout, validação da saída) | 🔜 Planejada |
+| 4 | IA aprofundada no n8n | Online | Extração estruturada em múltiplas etapas, RAG conectado ao workflow, roteamento por intenção entre vários fluxos | 🔜 Planejada |
 | 5 | AI Agents + n8n | Presencial | AI Agent nativo do n8n, tools, memória, guardrails | 🔜 Planejada |
 | 6 | Projeto Final n8n | Presencial | Hackathon: automação real ponta a ponta | 🔜 Planejada |
+
+> 📝 **Nota de percurso (turma 2026):** depois da Aula 01, a turma já chegou
+> com domínio sólido de n8n. Por isso eu adiantei, para a Aula 02, o que
+> originalmente só entraria na Aula 04: uma IA de verdade dentro do workflow.
+> Vocês já sabem IA (Disciplina 1) — o que faltava era só a mecânica de chamá-la
+> de dentro do n8n, e isso é, no fundo, mais uma API com autenticação. As Aulas
+> 3 e 4 mudam de foco: em vez de *apresentar* IA no n8n, elas **aprofundam** —
+> proteger essas chamadas e orquestrar fluxos mais sofisticados.
 
 **Como usar:** siga as aulas na ordem numérica. Dentro de cada aula, siga
 também as subpastas na ordem — cada uma parte do que foi construído na
@@ -49,8 +57,9 @@ anterior.
 ## 🧭 Trilha de conceitos
 
 ```
-Aula 1              Aula 2         Aula 3              Aula 4         Aula 5           Aula 6
-Workflow, webhook → APIs e REST → IF, loop, erros  →  n8n + IA   →  AI Agent no n8n → Projeto Final
+Aula 1              Aula 2              Aula 3              Aula 4            Aula 5        Aula 6
+Workflow, webhook → API, auth, 1ª IA → IF/erro, IA blindada → IA aprofundada → AI Agent  → Projeto Final
+                                                                 (RAG, roteio)   no n8n
 ```
 
 ## 🎯 O projeto que atravessa a disciplina — AI Customer Service
@@ -62,9 +71,9 @@ sozinho ou chama uma pessoa. Cada aula entrega uma peça:
 | Aula | A peça que você constrói |
 |------|--------------------------|
 | 1 | A **porta de entrada**: um webhook que recebe a mensagem, organiza os dados, gera um protocolo e responde |
-| 2 | **Consultar sistemas**: buscar o status do pedido numa API |
-| 3 | **Decidir e se proteger**: rotear por tipo, tratar erro, não deixar entrada inválida passar |
-| 4 | **Entender**: um LLM classifica a mensagem e extrai os dados |
+| 2 | **Consultar e entender**: chamar APIs de verdade (com autenticação) e ligar uma IA que lê o e-mail do cliente, analisa e responde sozinha |
+| 3 | **Decidir e se proteger**: rotear por tipo, tratar erro — inclusive erro de IA (timeout, custo, saída malformada) |
+| 4 | **Aprofundar**: extrair dados estruturados em várias etapas e decidir o fluxo certo (venda/suporte/financeiro) consultando uma base de conhecimento (RAG) |
 | 5 | **Agir**: um agente escolhe as ferramentas sozinho |
 | 6 | **Juntar tudo** num hackathon |
 

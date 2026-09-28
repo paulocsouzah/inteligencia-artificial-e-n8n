@@ -99,5 +99,7 @@ terraform destroy
 dele — workflow, trigger, node, item, expression, webhook — e construiu a porta
 de entrada do AI Customer Service. Mais importante: você viu, na tela, que um
 workflow que "funciona" ainda pode estar errado. Na **Aula 02**, essa porta de
-entrada passa a **conversar com outros sistemas**: você vai chamar APIs REST,
-lidar com autenticação e paginação, e buscar o status do pedido do cliente.
+entrada passa a **conversar com outros sistemas**: você vai chamar APIs REST de
+verdade, lidar com autenticação (API Key, Bearer Token, OAuth2) e paginação —
+e vai ligar uma **IA de verdade** dentro do fluxo: um workflow que lê o e-mail
+do cliente, entende o que ele quer e responde sozinho.
