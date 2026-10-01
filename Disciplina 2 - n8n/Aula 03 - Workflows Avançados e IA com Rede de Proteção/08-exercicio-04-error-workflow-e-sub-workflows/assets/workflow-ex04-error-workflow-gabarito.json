@@ -1,0 +1,44 @@
+{
+  "id": "aula03ex04gab001",
+  "name": "Aula 03 - Error Workflow (gabarito)",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [0, 0],
+      "id": "c4a1c2d3-0004-4a1a-9a1a-000000000001",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "i1",
+              "name": "mensagem",
+              "value": "=Falha no workflow \"{{ $json.workflow.name }}\" (execucao {{ $json.execution.id }}): {{ $json.execution.error.message }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [240, 0],
+      "id": "c4a1c2d3-0004-4a1a-9a1a-000000000002",
+      "name": "Montar alerta"
+    }
+  ],
+  "connections": {
+    "Error Trigger": {
+      "main": [[{ "node": "Montar alerta", "type": "main", "index": 0 }]]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}

@@ -1,0 +1,269 @@
+{
+  "id": "aula03projfinalgab",
+  "name": "Aula 03 - Projeto - AI Customer Service (blindado) (gabarito)",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": { "item": [{ "mode": "everyMinute" }] },
+        "simple": false,
+        "filters": { "q": "is:unread" },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0],
+      "id": "c5a1c2d3-0006-4a1a-9a1a-000000000001",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": { "id": "REPLACE_ME", "name": "Gmail account (aula 02/03)" }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "REPLACE_ME_SUBWORKFLOW_ID",
+          "mode": "list",
+          "cachedResultName": "Aula 03 - Sub-workflow - Analisar mensagem com IA"
+        },
+        "workflowInputs": {
+          "value": {
+            "mensagem_cliente": "={{ 'Assunto: ' + $json.subject + '\\n\\n' + $json.text }}"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [240, 0],
+      "id": "c5a1c2d3-0006-4a1a-9a1a-000000000002",
+      "name": "Analisar com IA (sub-workflow)"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "j1",
+              "leftValue": "={{ $json.precisa_humano }}",
+              "rightValue": true,
+              "operator": { "type": "boolean", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [480, 0],
+      "id": "c5a1c2d3-0006-4a1a-9a1a-000000000003",
+      "name": "Precisa humano?"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "k1", "name": "acao", "value": "escalado_validacao", "type": "string" }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [720, -140],
+      "id": "c5a1c2d3-0006-4a1a-9a1a-000000000004",
+      "name": "Escalar - saida invalida"
+    },
+    {
+      "parameters": {
+        "mode": "rules",
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+                "conditions": [
+                  {
+                    "id": "m1",
+                    "leftValue": "={{ $json.categoria }}",
+                    "rightValue": "logistica",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "outputKey": "logistica"
+            },
+            {
+              "conditions": {
+                "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+                "conditions": [
+                  {
+                    "id": "m2",
+                    "leftValue": "={{ $json.categoria }}",
+                    "rightValue": "financeiro",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "outputKey": "financeiro"
+            },
+            {
+              "conditions": {
+                "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+                "conditions": [
+                  {
+                    "id": "m3",
+                    "leftValue": "={{ $json.categoria }}",
+                    "rightValue": "elogio",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "outputKey": "elogio"
+            },
+            {
+              "conditions": {
+                "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+                "conditions": [
+                  {
+                    "id": "m4",
+                    "leftValue": "={{ $json.categoria }}",
+                    "rightValue": "duvida",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "outputKey": "duvida"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [720, 100],
+      "id": "c5a1c2d3-0006-4a1a-9a1a-000000000005",
+      "name": "Switch por categoria"
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "reply",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "message": "={{ $('Analisar com IA (sub-workflow)').item.json.resposta_sugerida }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [980, 0],
+      "id": "c5a1c2d3-0006-4a1a-9a1a-000000000006",
+      "name": "Responder - logistica",
+      "credentials": {
+        "gmailOAuth2": { "id": "REPLACE_ME", "name": "Gmail account (aula 02/03)" }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "reply",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "message": "={{ $('Analisar com IA (sub-workflow)').item.json.resposta_sugerida }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [980, 80],
+      "id": "c5a1c2d3-0006-4a1a-9a1a-000000000007",
+      "name": "Responder - financeiro",
+      "credentials": {
+        "gmailOAuth2": { "id": "REPLACE_ME", "name": "Gmail account (aula 02/03)" }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "reply",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "message": "={{ $('Analisar com IA (sub-workflow)').item.json.resposta_sugerida }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [980, 160],
+      "id": "c5a1c2d3-0006-4a1a-9a1a-000000000008",
+      "name": "Responder - elogio",
+      "credentials": {
+        "gmailOAuth2": { "id": "REPLACE_ME", "name": "Gmail account (aula 02/03)" }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "reply",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "message": "={{ $('Analisar com IA (sub-workflow)').item.json.resposta_sugerida }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [980, 240],
+      "id": "c5a1c2d3-0006-4a1a-9a1a-000000000009",
+      "name": "Responder - duvida",
+      "credentials": {
+        "gmailOAuth2": { "id": "REPLACE_ME", "name": "Gmail account (aula 02/03)" }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "k2", "name": "acao", "value": "escalado_categoria_desconhecida", "type": "string" }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [980, 320],
+      "id": "c5a1c2d3-0006-4a1a-9a1a-000000000010",
+      "name": "Escalar - categoria default"
+    }
+  ],
+  "connections": {
+    "Gmail Trigger": {
+      "main": [[{ "node": "Analisar com IA (sub-workflow)", "type": "main", "index": 0 }]]
+    },
+    "Analisar com IA (sub-workflow)": {
+      "main": [[{ "node": "Precisa humano?", "type": "main", "index": 0 }]]
+    },
+    "Precisa humano?": {
+      "main": [
+        [{ "node": "Escalar - saida invalida", "type": "main", "index": 0 }],
+        [{ "node": "Switch por categoria", "type": "main", "index": 0 }]
+      ]
+    },
+    "Switch por categoria": {
+      "main": [
+        [{ "node": "Responder - logistica", "type": "main", "index": 0 }],
+        [{ "node": "Responder - financeiro", "type": "main", "index": 0 }],
+        [{ "node": "Responder - elogio", "type": "main", "index": 0 }],
+        [{ "node": "Responder - duvida", "type": "main", "index": 0 }],
+        [{ "node": "Escalar - categoria default", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "errorWorkflow": "REPLACE_ME_ERROR_WORKFLOW_ID"
+  },
+  "pinData": {}
+}

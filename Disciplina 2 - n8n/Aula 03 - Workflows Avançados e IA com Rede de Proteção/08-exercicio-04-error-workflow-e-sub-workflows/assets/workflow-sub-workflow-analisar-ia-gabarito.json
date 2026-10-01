@@ -1,0 +1,66 @@
+{
+  "id": "aula03subwfgab001",
+  "name": "Aula 03 - Sub-workflow - Analisar mensagem com IA (gabarito)",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            { "name": "mensagem_cliente" }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [0, 0],
+      "id": "sw1a1c2d3-0000-4a1a-9a1a-000000000001",
+      "name": "Execute Workflow Trigger"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'gpt-4o-mini', messages: [ { role: 'system', content: 'Classifique a mensagem do cliente e responda em JSON com categoria (logistica, financeiro, elogio, duvida, outro), prioridade (baixa, media, alta), sentimento (positivo, neutro, negativo), confianca (0 a 1) e resposta_sugerida.' }, { role: 'user', content: $json.mensagem_cliente } ], response_format: { type: 'json_object' } }) }}",
+        "options": { "timeout": 8000 }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [240, 0],
+      "id": "sw1a1c2d3-0000-4a1a-9a1a-000000000002",
+      "name": "Chamar a LLM (retry + timeout)",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 1000,
+      "credentials": {
+        "httpHeaderAuth": { "id": "REPLACE_ME", "name": "LLM Bearer Token" }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "let dados;\nconst texto = $input.item.json.choices?.[0]?.message?.content;\n\ntry {\n  dados = JSON.parse(texto);\n} catch (e) {\n  return { json: { precisa_humano: true, motivo: 'JSON invalido: ' + e.message } };\n}\n\nconst camposObrigatorios = ['categoria', 'sentimento', 'prioridade', 'confianca'];\nconst faltando = camposObrigatorios.filter((c) => !(c in dados));\nif (faltando.length > 0) {\n  return { json: { precisa_humano: true, motivo: 'Campos faltando: ' + faltando.join(', ') } };\n}\n\nconst sentimentosValidos = ['positivo', 'neutro', 'negativo'];\nif (!sentimentosValidos.includes(dados.sentimento)) {\n  return { json: { precisa_humano: true, motivo: 'Sentimento fora do esperado: ' + dados.sentimento } };\n}\n\nreturn { json: { ...dados, precisa_humano: false } };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [480, 0],
+      "id": "sw1a1c2d3-0000-4a1a-9a1a-000000000003",
+      "name": "Validar saida da IA"
+    }
+  ],
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [[{ "node": "Chamar a LLM (retry + timeout)", "type": "main", "index": 0 }]]
+    },
+    "Chamar a LLM (retry + timeout)": {
+      "main": [[{ "node": "Validar saida da IA", "type": "main", "index": 0 }]]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}

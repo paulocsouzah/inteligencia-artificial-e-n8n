@@ -1,0 +1,135 @@
+{
+  "id": "aula03ex02gab001",
+  "name": "Aula 03 - Ex 02 - Merge e Loop Over Items (gabarito)",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [0, 0],
+      "id": "c2a1c2d3-0002-4a1a-9a1a-000000000001",
+      "name": "Manual Trigger"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\n  { json: { id: 1, nome: 'Maria Souza' } },\n  { json: { id: 2, nome: 'Joao Pereira' } },\n  { json: { id: 3, nome: 'Ana Lima' } },\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [240, -80],
+      "id": "c2a1c2d3-0002-4a1a-9a1a-000000000002",
+      "name": "Clientes"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\n  { json: { cliente_id: 2, pedido: 'Tenis', status: 'entregue' } },\n  { json: { cliente_id: 1, pedido: 'Camiseta', status: 'atrasado' } },\n  { json: { cliente_id: 3, pedido: 'Bone', status: 'a caminho' } },\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [240, 80],
+      "id": "c2a1c2d3-0002-4a1a-9a1a-000000000003",
+      "name": "Pedidos"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByFields",
+        "fieldsToMatchString": "id=cliente_id",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [480, 0],
+      "id": "c2a1c2d3-0002-4a1a-9a1a-000000000004",
+      "name": "Merge - Cliente + Pedido"
+    },
+    {
+      "parameters": {
+        "jsCode": "return Array.from({ length: 10 }, (_, i) => ({ json: { id: i + 1, texto: `mensagem ${i + 1}` } }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [240, 260],
+      "id": "c2a1c2d3-0002-4a1a-9a1a-000000000005",
+      "name": "10 mensagens"
+    },
+    {
+      "parameters": {
+        "batchSize": 3,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [480, 260],
+      "id": "c2a1c2d3-0002-4a1a-9a1a-000000000006",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [720, 220],
+      "id": "c2a1c2d3-0002-4a1a-9a1a-000000000007",
+      "name": "Wait 1s"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "g1", "name": "processado", "value": true, "type": "boolean" }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [940, 220],
+      "id": "c2a1c2d3-0002-4a1a-9a1a-000000000008",
+      "name": "Marcar processado"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "g2", "name": "total_processado", "value": true, "type": "boolean" }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [720, 320],
+      "id": "c2a1c2d3-0002-4a1a-9a1a-000000000009",
+      "name": "Fim do loop"
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          { "node": "Clientes", "type": "main", "index": 0 },
+          { "node": "Pedidos", "type": "main", "index": 0 },
+          { "node": "10 mensagens", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Clientes": { "main": [[{ "node": "Merge - Cliente + Pedido", "type": "main", "index": 0 }]] },
+    "Pedidos": { "main": [[{ "node": "Merge - Cliente + Pedido", "type": "main", "index": 1 }]] },
+    "10 mensagens": { "main": [[{ "node": "Loop Over Items", "type": "main", "index": 0 }]] },
+    "Loop Over Items": {
+      "main": [
+        [{ "node": "Fim do loop", "type": "main", "index": 0 }],
+        [{ "node": "Wait 1s", "type": "main", "index": 0 }]
+      ]
+    },
+    "Wait 1s": { "main": [[{ "node": "Marcar processado", "type": "main", "index": 0 }]] },
+    "Marcar processado": { "main": [[{ "node": "Loop Over Items", "type": "main", "index": 0 }]] }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}

@@ -1,0 +1,88 @@
+{
+  "id": "aula03ex03gab001",
+  "name": "Aula 03 - Ex 03 - Blindando a chamada de IA (gabarito)",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [0, 0],
+      "id": "c3a1c2d3-0003-4a1a-9a1a-000000000001",
+      "name": "Manual Trigger"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "h1",
+              "name": "mensagem_cliente",
+              "value": "Comprei um produto errado por engano, preciso trocar.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [240, 0],
+      "id": "c3a1c2d3-0003-4a1a-9a1a-000000000002",
+      "name": "Mensagem do cliente"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'gpt-4o-mini', messages: [ { role: 'system', content: 'Classifique a mensagem do cliente e responda em JSON com categoria (troca, duvida, elogio, reclamacao), prioridade (baixa, media, alta) e sentimento (positivo, neutro, negativo).' }, { role: 'user', content: $json.mensagem_cliente } ], response_format: { type: 'json_object' } }) }}",
+        "options": {
+          "timeout": 8000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [480, 0],
+      "id": "c3a1c2d3-0003-4a1a-9a1a-000000000003",
+      "name": "Chamar a LLM (retry + timeout)",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 1000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_ME",
+          "name": "LLM Bearer Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "let dados;\nconst texto = $input.item.json.choices?.[0]?.message?.content;\n\ntry {\n  dados = JSON.parse(texto);\n} catch (e) {\n  return { json: { precisa_humano: true, motivo: 'JSON invalido: ' + e.message } };\n}\n\nconst camposObrigatorios = ['categoria', 'sentimento', 'prioridade'];\nconst faltando = camposObrigatorios.filter((c) => !(c in dados));\nif (faltando.length > 0) {\n  return { json: { precisa_humano: true, motivo: 'Campos faltando: ' + faltando.join(', ') } };\n}\n\nconst sentimentosValidos = ['positivo', 'neutro', 'negativo'];\nif (!sentimentosValidos.includes(dados.sentimento)) {\n  return { json: { precisa_humano: true, motivo: 'Sentimento fora do esperado: ' + dados.sentimento } };\n}\n\nreturn { json: { ...dados, precisa_humano: false } };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [720, 0],
+      "id": "c3a1c2d3-0003-4a1a-9a1a-000000000004",
+      "name": "Validar saida da IA"
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [[{ "node": "Mensagem do cliente", "type": "main", "index": 0 }]]
+    },
+    "Mensagem do cliente": {
+      "main": [[{ "node": "Chamar a LLM (retry + timeout)", "type": "main", "index": 0 }]]
+    },
+    "Chamar a LLM (retry + timeout)": {
+      "main": [[{ "node": "Validar saida da IA", "type": "main", "index": 0 }]]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}

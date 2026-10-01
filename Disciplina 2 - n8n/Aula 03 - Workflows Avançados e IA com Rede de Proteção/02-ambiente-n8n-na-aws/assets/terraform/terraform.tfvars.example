@@ -1,0 +1,11 @@
+# Copie este arquivo para "terraform.tfvars" (ele fica fora do Git — veja o .gitignore)
+# e preencha com os SEUS valores.
+
+my_ip = "SEU_IP_PUBLICO_AQUI"   # descubra em https://www.meuip.com.br/ — libera o SSH só para você
+
+# Opcionais (os padrões já funcionam):
+# project_name      = "n8n-faex"        # mude se já houver algo com esse nome na sua conta
+# http_allowed_cidr = "0.0.0.0/0"       # troque por "SEU_IP/32" para fechar o n8n só para você
+# instance_type     = "t3.small"
+# n8n_version       = "2.40.5"
+# timezone          = "America/Sao_Paulo"

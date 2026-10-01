@@ -87,5 +87,4 @@ entrega um **relatório em PDF** com os prints e as respostas às perguntas de
 reflexão, **mais** os workflows exportados em JSON. Os detalhes e a rubrica
 estão no próprio módulo.
 
-**Próxima aula:** Aula 03 — Workflows avançados e IA com rede de proteção
-(em breve).
+**Próxima aula:** [Aula 03 — Workflows avançados e IA com rede de proteção](<../Aula 03 - Workflows Avançados e IA com Rede de Proteção/README.md>).

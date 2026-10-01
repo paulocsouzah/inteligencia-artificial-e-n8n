@@ -1,0 +1,209 @@
+{
+  "id": "aula03ex01gab001",
+  "name": "Aula 03 - Ex 01 - De If para Switch (gabarito)",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [0, 0],
+      "id": "c1a1c2d3-0001-4a1a-9a1a-000000000001",
+      "name": "Manual Trigger"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d1111111-1111-4111-8111-111111111111",
+              "name": "prioridade",
+              "value": "urgente",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [240, 0],
+      "id": "c1a1c2d3-0001-4a1a-9a1a-000000000002",
+      "name": "Prioridade do chamado"
+    },
+    {
+      "parameters": {
+        "mode": "rules",
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+                "conditions": [
+                  {
+                    "id": "e1111111-1111-4111-8111-111111111111",
+                    "leftValue": "={{ $json.prioridade }}",
+                    "rightValue": "critica",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "outputKey": "critica"
+            },
+            {
+              "conditions": {
+                "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+                "conditions": [
+                  {
+                    "id": "e2222222-2222-4222-8222-222222222222",
+                    "leftValue": "={{ $json.prioridade }}",
+                    "rightValue": "alta",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "outputKey": "alta"
+            },
+            {
+              "conditions": {
+                "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+                "conditions": [
+                  {
+                    "id": "e3333333-3333-4333-8333-333333333333",
+                    "leftValue": "={{ $json.prioridade }}",
+                    "rightValue": "media",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "outputKey": "media"
+            },
+            {
+              "conditions": {
+                "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+                "conditions": [
+                  {
+                    "id": "e4444444-4444-4444-8444-444444444444",
+                    "leftValue": "={{ $json.prioridade }}",
+                    "rightValue": "baixa",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "outputKey": "baixa"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "allMatchingOutputs": false
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [480, 0],
+      "id": "c1a1c2d3-0001-4a1a-9a1a-000000000003",
+      "name": "Roteador de prioridade"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "f1", "name": "acao", "value": "Notificar plantao agora", "type": "string" }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [760, -160],
+      "id": "c1a1c2d3-0001-4a1a-9a1a-000000000004",
+      "name": "Critica"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "f2", "name": "acao", "value": "Responder em ate 1 hora", "type": "string" }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [760, -60],
+      "id": "c1a1c2d3-0001-4a1a-9a1a-000000000005",
+      "name": "Alta"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "f3", "name": "acao", "value": "Responder em ate 4 horas", "type": "string" }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [760, 40],
+      "id": "c1a1c2d3-0001-4a1a-9a1a-000000000006",
+      "name": "Media"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "f4", "name": "acao", "value": "Responder em ate 24 horas", "type": "string" }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [760, 140],
+      "id": "c1a1c2d3-0001-4a1a-9a1a-000000000007",
+      "name": "Baixa"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "f5", "name": "acao", "value": "Prioridade nao reconhecida - revisar manualmente", "type": "string" }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [760, 240],
+      "id": "c1a1c2d3-0001-4a1a-9a1a-000000000008",
+      "name": "Default - nao reconhecida"
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [[{ "node": "Prioridade do chamado", "type": "main", "index": 0 }]]
+    },
+    "Prioridade do chamado": {
+      "main": [[{ "node": "Roteador de prioridade", "type": "main", "index": 0 }]]
+    },
+    "Roteador de prioridade": {
+      "main": [
+        [{ "node": "Critica", "type": "main", "index": 0 }],
+        [{ "node": "Alta", "type": "main", "index": 0 }],
+        [{ "node": "Media", "type": "main", "index": 0 }],
+        [{ "node": "Baixa", "type": "main", "index": 0 }],
+        [{ "node": "Default - nao reconhecida", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}
