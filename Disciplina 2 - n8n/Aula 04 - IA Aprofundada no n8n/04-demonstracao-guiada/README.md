@@ -27,10 +27,18 @@ agora é o seu próprio sistema respondendo.
 
 ## 🎬 Ato 3 — Extração e classificação, numa reclamação só
 
-Para aprender a mecânica, eu escolho **uma** reclamação específica (com um
-Code node: `$input.all().map(i=>i.json).find(r => r.id === 2)`), extraio
-os dados com schema fechado, e classifico a intenção — exatamente como nos
-Exercícios 01 e 02, só que a mensagem agora vem da API, não de um Set node.
+Para aprender a mecânica, eu escolho **uma** reclamação só — a primeira da
+lista (`$input.all()[0].json`) —, extraio os dados com schema fechado, e
+classifico a intenção — exatamente como nos Exercícios 01 e 02, só que a
+mensagem agora vem da API, não de um Set node.
+
+> 💡 **Por que "a primeira", e não um `id` fixo?** Eu testei com um `id`
+> escolhido à mão (`find(r => r.id === 2)`) e tropecei num problema real: o
+> banco da loja é compartilhado entre todo mundo que está testando. Se
+> aquela reclamação específica já tiver sido processada por você ou por
+> outra pessoa, o `find` não acha nada, e a chamada para a LLM quebra com
+> `"content": null`. Pegar sempre a **primeira** da lista resolve isso —
+> funciona não importa quais `id`s existem no banco agora.
 
 **O que observar:** `numero_pedido: "PED-20261008-1"`, `motivo: "troca"`,
 `intencao: "suporte"`. O texto veio do banco; o resto é igual ao que você
