@@ -1,0 +1,164 @@
+{
+  "id": "aula04ex01gab002",
+  "name": "Aula 04 - Ex 01 - Extracao estruturada (gabarito)",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "m0",
+      "name": "Manual Trigger"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "http://3.210.122.73:8080/api/reclamacoes?status=nova",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "g1",
+      "name": "Buscar reclamacoes novas"
+    },
+    {
+      "parameters": {
+        "jsCode": "return { json: $input.all().map(i=>i.json).find(r => r.id === 2) };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        0
+      ],
+      "id": "EscolherreclamacaoC",
+      "name": "Escolher reclamacao"
+    },
+    {
+      "parameters": {
+        "jsCode": "const sistema = 'Extraia os dados da reclamacao do cliente. Use null quando a informacao nao existir no texto.';\nconst corpo = { model: 'gpt-4o-mini', messages: [ { role: 'system', content: sistema }, { role: 'user', content: $json.mensagem } ], response_format: {\"type\": \"json_schema\", \"json_schema\": {\"name\": \"extracao_pedido\", \"strict\": true, \"schema\": {\"type\": \"object\", \"properties\": {\"numero_pedido\": {\"type\": [\"string\", \"null\"]}, \"produto\": {\"type\": [\"string\", \"null\"]}, \"motivo\": {\"type\": \"string\", \"enum\": [\"troca\", \"defeito\", \"atraso\", \"outro\"]}, \"urgente\": {\"type\": \"boolean\"}}, \"required\": [\"numero_pedido\", \"produto\", \"motivo\", \"urgente\"], \"additionalProperties\": false}}} };\nreturn { json: { ...$json, corpo: JSON.stringify(corpo) } };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        660,
+        0
+      ],
+      "id": "MontarcorpoExtrairdaC",
+      "name": "Montar corpo Extrair dados"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.corpo }}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        770,
+        0
+      ],
+      "id": "ExtrairdadosH",
+      "name": "Extrair dados",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 1000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_ME",
+          "name": "LLM Bearer Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const dados = JSON.parse($input.item.json.choices[0].message.content); const original = $('Escolher reclamacao').first().json; return { json: { reclamacao_id: original.id, protocolo: original.protocolo, ...dados } };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        990,
+        0
+      ],
+      "id": "LerJSONC",
+      "name": "Ler JSON"
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Buscar reclamacoes novas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar reclamacoes novas": {
+      "main": [
+        [
+          {
+            "node": "Escolher reclamacao",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Escolher reclamacao": {
+      "main": [
+        [
+          {
+            "node": "Montar corpo Extrair dados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Montar corpo Extrair dados": {
+      "main": [
+        [
+          {
+            "node": "Extrair dados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extrair dados": {
+      "main": [
+        [
+          {
+            "node": "Ler JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}

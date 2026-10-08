@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<title>Loja FAEX — ambiente da disciplina de n8n</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  :root { --azul: #1d4ed8; --bg: #f8fafc; --texto: #1f2933; }
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; margin: 0; background: var(--bg); color: var(--texto); }
+  header { background: var(--azul); color: #fff; padding: 20px 24px; }
+  header h1 { margin: 0; font-size: 20px; }
+  header p { margin: 4px 0 0; opacity: .85; font-size: 13px; }
+  main { max-width: 960px; margin: 0 auto; padding: 24px; display: grid; gap: 24px; grid-template-columns: 1fr; }
+  @media (min-width: 800px) { main { grid-template-columns: 1fr 1fr; } }
+  section { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px; }
+  section h2 { margin-top: 0; font-size: 16px; color: var(--azul); }
+  .produto { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; }
+  .produto:last-child { border-bottom: none; }
+  .produto button { background: var(--azul); color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; }
+  form { display: grid; gap: 10px; }
+  input, textarea, select { padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font: inherit; }
+  textarea { min-height: 70px; }
+  button[type="submit"] { background: var(--azul); color: #fff; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+  .msg { font-size: 13px; padding: 8px; border-radius: 6px; margin-top: 8px; white-space: pre-wrap; }
+  .msg.ok { background: #ecfdf5; color: #065f46; }
+  .msg.erro { background: #fef2f2; color: #991b1b; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 6px 4px; border-bottom: 1px solid #eee; }
+  code { background: #f1f5f9; padding: 1px 4px; border-radius: 4px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>🛒 Loja FAEX</h1>
+  <p>Ambiente real da disciplina de n8n — pedidos e reclamações de verdade, consultados pelo workflow.</p>
+</header>
+<main>
+  <section>
+    <h2>Produtos</h2>
+    <div id="produtos">Carregando…</div>
+  </section>
+
+  <section>
+    <h2>Comprar</h2>
+    <form id="form-pedido">
+      <select id="produto_id" required></select>
+      <input id="cliente_nome_pedido" placeholder="Seu nome" required />
+      <input id="cliente_email_pedido" type="email" placeholder="Seu e-mail" required />
+      <input id="quantidade" type="number" min="1" value="1" required />
+      <button type="submit">Confirmar compra</button>
+    </form>
+    <div id="msg-pedido"></div>
+  </section>
+
+  <section>
+    <h2>Fazer uma reclamação</h2>
+    <form id="form-reclamacao">
+      <input id="pedido_id" placeholder="Protocolo do pedido (opcional, ex: PED-20261008-3)" />
+      <input id="cliente_nome_rec" placeholder="Seu nome" required />
+      <input id="cliente_email_rec" type="email" placeholder="Seu e-mail" required />
+      <textarea id="mensagem" placeholder="Descreva o problema" required></textarea>
+      <button type="submit">Enviar reclamação</button>
+    </form>
+    <div id="msg-reclamacao"></div>
+  </section>
+
+  <section>
+    <h2>Últimos pedidos</h2>
+    <table id="tabela-pedidos"><thead><tr><th>Protocolo</th><th>Produto</th><th>Cliente</th><th>Valor</th></tr></thead><tbody></tbody></table>
+  </section>
+</main>
+
+<script>
+const api = (path, opts) => fetch('/api' + path, opts).then(async (r) => {
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(data.erro || ('HTTP ' + r.status));
+  return data;
+});
+
+async function carregarProdutos() {
+  const produtos = await api('/produtos');
+  const div = document.getElementById('produtos');
+  div.innerHTML = produtos.map(p => `
+    <div class="produto">
+      <span>${p.nome} — R$ ${Number(p.preco).toFixed(2)} <small>(${p.estoque} em estoque)</small></span>
+    </div>`).join('');
+  const select = document.getElementById('produto_id');
+  select.innerHTML = produtos.map(p => `<option value="${p.id}">${p.nome} — R$ ${Number(p.preco).toFixed(2)}</option>`).join('');
+}
+
+async function carregarPedidos() {
+  const pedidos = await api('/pedidos');
+  const tbody = document.querySelector('#tabela-pedidos tbody');
+  tbody.innerHTML = pedidos.slice(0, 10).map(p => `
+    <tr><td><code>${p.protocolo}</code></td><td>${p.produto_nome}</td><td>${p.cliente_nome}</td><td>R$ ${Number(p.valor_total).toFixed(2)}</td></tr>
+  `).join('');
+}
+
+document.getElementById('form-pedido').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const msg = document.getElementById('msg-pedido');
+  msg.className = 'msg';
+  msg.textContent = '';
+  try {
+    const resultado = await api('/pedidos', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        produto_id: document.getElementById('produto_id').value,
+        cliente_nome: document.getElementById('cliente_nome_pedido').value,
+        cliente_email: document.getElementById('cliente_email_pedido').value,
+        quantidade: Number(document.getElementById('quantidade').value),
+      }),
+    });
+    msg.className = 'msg ok';
+    msg.textContent = `Pedido confirmado! Protocolo: ${resultado.protocolo}`;
+    carregarProdutos();
+    carregarPedidos();
+  } catch (erro) {
+    msg.className = 'msg erro';
+    msg.textContent = erro.message;
+  }
+});
+
+document.getElementById('form-reclamacao').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const msg = document.getElementById('msg-reclamacao');
+  msg.className = 'msg';
+  msg.textContent = '';
+  try {
+    const resultado = await api('/reclamacoes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        pedido_id: document.getElementById('pedido_id').value || null,
+        cliente_nome: document.getElementById('cliente_nome_rec').value,
+        cliente_email: document.getElementById('cliente_email_rec').value,
+        mensagem: document.getElementById('mensagem').value,
+      }),
+    });
+    msg.className = 'msg ok';
+    msg.textContent = `Reclamação registrada! Protocolo: ${resultado.protocolo}. Em breve você recebe uma resposta por e-mail.`;
+    e.target.reset();
+  } catch (erro) {
+    msg.className = 'msg erro';
+    msg.textContent = erro.message;
+  }
+});
+
+carregarProdutos();
+carregarPedidos();
+</script>
+</body>
+</html>

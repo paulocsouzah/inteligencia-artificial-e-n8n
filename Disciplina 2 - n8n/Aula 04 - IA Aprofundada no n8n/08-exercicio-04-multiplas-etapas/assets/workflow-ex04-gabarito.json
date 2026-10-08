@@ -1,0 +1,394 @@
+{
+  "id": "aula04ex04gab002",
+  "name": "Aula 04 - Ex 04 - Multiplas etapas com a loja real (gabarito)",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "m0",
+      "name": "Manual Trigger"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "http://3.210.122.73:8080/api/reclamacoes?status=nova",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "g1",
+      "name": "Buscar reclamacao"
+    },
+    {
+      "parameters": {
+        "jsCode": "return { json: $input.all().map(i=>i.json).find(r => r.id === 2) };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        0
+      ],
+      "id": "EscolherreclamacaoC",
+      "name": "Escolher reclamacao"
+    },
+    {
+      "parameters": {
+        "jsCode": "const sistema = 'Classifique a intencao da reclamacao: venda, suporte (problema com produto, entrega, troca ou uso), financeiro (cobranca, estorno, reembolso), outro.';\nconst corpo = { model: 'gpt-4o-mini', messages: [ { role: 'system', content: sistema }, { role: 'user', content: $json.mensagem } ], response_format: {\"type\": \"json_schema\", \"json_schema\": {\"name\": \"intencao\", \"strict\": true, \"schema\": {\"type\": \"object\", \"properties\": {\"intencao\": {\"type\": \"string\", \"enum\": [\"venda\", \"suporte\", \"financeiro\", \"outro\"]}, \"confianca\": {\"type\": \"number\"}}, \"required\": [\"intencao\", \"confianca\"], \"additionalProperties\": false}}} };\nreturn { json: { corpo: JSON.stringify(corpo) } };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        660,
+        0
+      ],
+      "id": "MontarcorpoEtapa1intC",
+      "name": "Montar corpo Etapa 1 intencao"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.corpo }}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        770,
+        0
+      ],
+      "id": "Etapa1intencaoH",
+      "name": "Etapa 1 intencao",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 1000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_ME",
+          "name": "LLM Bearer Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const dados = JSON.parse($input.item.json.choices[0].message.content); const original = $('Escolher reclamacao').first().json; return { json: { ...original, intencao: dados.intencao, confianca: dados.confianca } };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        990,
+        0
+      ],
+      "id": "LerintencaoC",
+      "name": "Ler intencao"
+    },
+    {
+      "parameters": {
+        "jsCode": "const sistema = 'Extraia os dados da reclamacao. Use null quando nao existir no texto.';\nconst corpo = { model: 'gpt-4o-mini', messages: [ { role: 'system', content: sistema }, { role: 'user', content: $json.mensagem } ], response_format: {\"type\": \"json_schema\", \"json_schema\": {\"name\": \"extracao_pedido\", \"strict\": true, \"schema\": {\"type\": \"object\", \"properties\": {\"numero_pedido\": {\"type\": [\"string\", \"null\"]}, \"produto\": {\"type\": [\"string\", \"null\"]}, \"motivo\": {\"type\": \"string\", \"enum\": [\"troca\", \"defeito\", \"atraso\", \"outro\"]}, \"urgente\": {\"type\": \"boolean\"}}, \"required\": [\"numero_pedido\", \"produto\", \"motivo\", \"urgente\"], \"additionalProperties\": false}}} };\nreturn { json: { ...$json, corpo: JSON.stringify(corpo) } };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1210,
+        0
+      ],
+      "id": "MontarcorpoEtapa2extC",
+      "name": "Montar corpo Etapa 2 extracao"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.corpo }}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1320,
+        0
+      ],
+      "id": "Etapa2extracaoH",
+      "name": "Etapa 2 extracao",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 1000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_ME",
+          "name": "LLM Bearer Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const extr = JSON.parse($input.item.json.choices[0].message.content); const ant = $('Ler intencao').first().json; return { json: { ...ant, extracao: extr } };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1540,
+        0
+      ],
+      "id": "LerextracaoC",
+      "name": "Ler extracao"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "http://3.210.122.73:8080/api/politicas",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1760,
+        0
+      ],
+      "id": "g2",
+      "name": "Buscar politicas"
+    },
+    {
+      "parameters": {
+        "jsCode": "const politicas = $input.all().map(i=>i.json); const ant = $('Ler extracao').first().json; return { json: { ...ant, politicas } };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1980,
+        0
+      ],
+      "id": "JuntarpoliticasC",
+      "name": "Juntar politicas"
+    },
+    {
+      "parameters": {
+        "jsCode": "const politicas = $json.politicas.map(p => p.titulo + ': ' + p.texto).join('\\n');\nconst sistema = 'Responda somente com base na base de conhecimento. Cite o trecho usado. Se nao encontrar, responda exatamente: Nao encontrei essa informacao.';\nconst corpo = { model: 'gpt-4o-mini', messages: [ { role: 'system', content: sistema }, { role: 'user', content: 'Base:\\n' + politicas + '\\n\\nPergunta: ' + $json.mensagem } ] };\nreturn { json: { ...$json, corpo: JSON.stringify(corpo) } };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2200,
+        0
+      ],
+      "id": "MontarcorpoEtapa3resC",
+      "name": "Montar corpo Etapa 3 resposta"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.corpo }}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2310,
+        0
+      ],
+      "id": "Etapa3respostaH",
+      "name": "Etapa 3 resposta",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 1000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_ME",
+          "name": "LLM Bearer Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const ant = $('Juntar politicas').first().json; const resposta = $input.item.json.choices[0].message.content;\nreturn { json: { reclamacao_id: ant.id, protocolo: ant.protocolo, intencao: ant.intencao, confianca: ant.confianca, extracao: ant.extracao, resposta } };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2530,
+        0
+      ],
+      "id": "ResultadofinalC",
+      "name": "Resultado final"
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Buscar reclamacao",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar reclamacao": {
+      "main": [
+        [
+          {
+            "node": "Escolher reclamacao",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Escolher reclamacao": {
+      "main": [
+        [
+          {
+            "node": "Montar corpo Etapa 1 intencao",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Montar corpo Etapa 1 intencao": {
+      "main": [
+        [
+          {
+            "node": "Etapa 1 intencao",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Etapa 1 intencao": {
+      "main": [
+        [
+          {
+            "node": "Ler intencao",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ler intencao": {
+      "main": [
+        [
+          {
+            "node": "Montar corpo Etapa 2 extracao",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Montar corpo Etapa 2 extracao": {
+      "main": [
+        [
+          {
+            "node": "Etapa 2 extracao",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Etapa 2 extracao": {
+      "main": [
+        [
+          {
+            "node": "Ler extracao",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ler extracao": {
+      "main": [
+        [
+          {
+            "node": "Buscar politicas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar politicas": {
+      "main": [
+        [
+          {
+            "node": "Juntar politicas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Juntar politicas": {
+      "main": [
+        [
+          {
+            "node": "Montar corpo Etapa 3 resposta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Montar corpo Etapa 3 resposta": {
+      "main": [
+        [
+          {
+            "node": "Etapa 3 resposta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Etapa 3 resposta": {
+      "main": [
+        [
+          {
+            "node": "Resultado final",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}

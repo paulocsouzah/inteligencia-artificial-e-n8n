@@ -82,5 +82,4 @@ O módulo [09-exercicio-final](09-exercicio-final/README.md) fecha a aula.
 Relatório em PDF com prints e respostas, mais os workflows exportados em
 JSON. Rubrica no próprio módulo.
 
-**Próxima aula:** Aula 04 — IA aprofundada no n8n (extração em múltiplas
-etapas, RAG conectado ao workflow, roteamento por intenção).
+**Próxima aula:** [Aula 04 — IA aprofundada no n8n](<../Aula 04 - IA Aprofundada no n8n/README.md>).

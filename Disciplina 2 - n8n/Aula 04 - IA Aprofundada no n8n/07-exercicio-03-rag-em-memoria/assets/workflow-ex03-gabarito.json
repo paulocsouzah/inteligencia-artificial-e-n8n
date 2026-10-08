@@ -1,0 +1,214 @@
+{
+  "id": "aula04ex03gab002",
+  "name": "Aula 04 - Ex 03 - RAG com a base de politicas real (gabarito)",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "m0",
+      "name": "Manual Trigger"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "http://3.210.122.73:8080/api/reclamacoes?status=nova",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "g1",
+      "name": "Buscar reclamacao"
+    },
+    {
+      "parameters": {
+        "jsCode": "return { json: $input.all().map(i=>i.json).find(r => r.id === 4) };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        0
+      ],
+      "id": "EscolherreclamacaoC",
+      "name": "Escolher reclamacao"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "http://3.210.122.73:8080/api/politicas",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        660,
+        0
+      ],
+      "id": "g2",
+      "name": "Buscar politicas"
+    },
+    {
+      "parameters": {
+        "jsCode": "const politicas = $input.first().json; return { json: { mensagem: $('Escolher reclamacao').first().json.mensagem, politicas } };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        880,
+        0
+      ],
+      "id": "JuntarperguntaepolitC",
+      "name": "Juntar pergunta e politicas"
+    },
+    {
+      "parameters": {
+        "jsCode": "const politicas = $json.politicas.map(p => p.titulo + ': ' + p.texto).join('\\n');\nconst sistema = 'Responda somente com base na base de conhecimento abaixo. Cite o trecho que usou. Se a informacao nao estiver na base, responda exatamente: Nao encontrei essa informacao.';\nconst corpo = { model: 'gpt-4o-mini', messages: [ { role: 'system', content: sistema }, { role: 'user', content: 'Base:\\n' + politicas + '\\n\\nPergunta: ' + $json.mensagem } ] };\nreturn { json: { corpo: JSON.stringify(corpo) } };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1100,
+        0
+      ],
+      "id": "MontarcorpoResponderC",
+      "name": "Montar corpo Responder com a base"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.corpo }}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1210,
+        0
+      ],
+      "id": "RespondercomabaseH",
+      "name": "Responder com a base",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 1000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_ME",
+          "name": "LLM Bearer Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return { json: { resposta: $input.item.json.choices[0].message.content } };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1430,
+        0
+      ],
+      "id": "ExtrairrespostaC",
+      "name": "Extrair resposta"
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Buscar reclamacao",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar reclamacao": {
+      "main": [
+        [
+          {
+            "node": "Escolher reclamacao",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Escolher reclamacao": {
+      "main": [
+        [
+          {
+            "node": "Buscar politicas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar politicas": {
+      "main": [
+        [
+          {
+            "node": "Juntar pergunta e politicas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Juntar pergunta e politicas": {
+      "main": [
+        [
+          {
+            "node": "Montar corpo Responder com a base",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Montar corpo Responder com a base": {
+      "main": [
+        [
+          {
+            "node": "Responder com a base",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Responder com a base": {
+      "main": [
+        [
+          {
+            "node": "Extrair resposta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}

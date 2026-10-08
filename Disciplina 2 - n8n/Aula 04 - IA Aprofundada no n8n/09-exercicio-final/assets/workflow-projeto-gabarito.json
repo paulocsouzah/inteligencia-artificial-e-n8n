@@ -1,0 +1,514 @@
+{
+  "id": "aula04projfinalgab",
+  "name": "Aula 04 - Projeto - Atendimento da loja (gabarito)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "sched1",
+      "name": "A cada minuto"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "http://3.210.122.73:8080/api/reclamacoes?status=nova",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "g1",
+      "name": "Buscar reclamacoes novas"
+    },
+    {
+      "parameters": {
+        "jsCode": "const sistema = 'Classifique a intencao da reclamacao: venda, suporte (problema com produto, entrega, troca ou uso), financeiro (cobranca, estorno, reembolso), outro.';\nconst corpo = { model: 'gpt-4o-mini', messages: [ { role: 'system', content: sistema }, { role: 'user', content: $json.mensagem } ], response_format: {\"type\": \"json_schema\", \"json_schema\": {\"name\": \"intencao\", \"strict\": true, \"schema\": {\"type\": \"object\", \"properties\": {\"intencao\": {\"type\": \"string\", \"enum\": [\"venda\", \"suporte\", \"financeiro\", \"outro\"]}, \"confianca\": {\"type\": \"number\"}}, \"required\": [\"intencao\", \"confianca\"], \"additionalProperties\": false}}} };\nreturn { json: { ...$json, corpo: JSON.stringify(corpo) } };",
+        "mode": "runOnceForEachItem"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        0
+      ],
+      "id": "MontarcorpoEtapa1intC",
+      "name": "Montar corpo Etapa 1 intencao"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.corpo }}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        550,
+        0
+      ],
+      "id": "Etapa1intencaoH",
+      "name": "Etapa 1 intencao",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 1000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_ME",
+          "name": "LLM Bearer Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const dados = JSON.parse($input.item.json.choices[0].message.content); const original = $('Buscar reclamacoes novas').item.json; return { json: { ...original, intencao: dados.intencao, confianca: dados.confianca } };",
+        "mode": "runOnceForEachItem"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        770,
+        0
+      ],
+      "id": "LerintencaoC",
+      "name": "Ler intencao"
+    },
+    {
+      "parameters": {
+        "jsCode": "const sistema = 'Extraia os dados da reclamacao. Use null quando nao existir no texto.';\nconst corpo = { model: 'gpt-4o-mini', messages: [ { role: 'system', content: sistema }, { role: 'user', content: $json.mensagem } ], response_format: {\"type\": \"json_schema\", \"json_schema\": {\"name\": \"extracao_pedido\", \"strict\": true, \"schema\": {\"type\": \"object\", \"properties\": {\"numero_pedido\": {\"type\": [\"string\", \"null\"]}, \"produto\": {\"type\": [\"string\", \"null\"]}, \"motivo\": {\"type\": \"string\", \"enum\": [\"troca\", \"defeito\", \"atraso\", \"outro\"]}, \"urgente\": {\"type\": \"boolean\"}}, \"required\": [\"numero_pedido\", \"produto\", \"motivo\", \"urgente\"], \"additionalProperties\": false}}} };\nreturn { json: { ...$json, corpo: JSON.stringify(corpo) } };",
+        "mode": "runOnceForEachItem"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        990,
+        0
+      ],
+      "id": "MontarcorpoEtapa2extC",
+      "name": "Montar corpo Etapa 2 extracao"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.corpo }}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1100,
+        0
+      ],
+      "id": "Etapa2extracaoH",
+      "name": "Etapa 2 extracao",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 1000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_ME",
+          "name": "LLM Bearer Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const extr = JSON.parse($input.item.json.choices[0].message.content); const ant = $('Ler intencao').item.json; return { json: { ...ant, extracao: extr } };",
+        "mode": "runOnceForEachItem"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1320,
+        0
+      ],
+      "id": "LerextracaoC",
+      "name": "Ler extracao"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "http://3.210.122.73:8080/api/politicas",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1540,
+        -150
+      ],
+      "id": "g2",
+      "name": "Buscar politicas (uma vez)"
+    },
+    {
+      "parameters": {
+        "jsCode": "const politicas = $('Buscar politicas (uma vez)').all().map(i=>i.json); const texto = politicas.map(p=>p.titulo+': '+p.texto).join('\\n'); const ant = $('Ler extracao').item.json; return { json: { ...ant, politicas_texto: texto } };",
+        "mode": "runOnceForEachItem"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1540,
+        0
+      ],
+      "id": "JuntarpoliticasC",
+      "name": "Juntar politicas"
+    },
+    {
+      "parameters": {
+        "jsCode": "const sistema = 'Responda somente com base na base de conhecimento. Cite o trecho usado. Se nao encontrar, responda exatamente: Nao encontrei essa informacao.';\nconst corpo = { model: 'gpt-4o-mini', messages: [ { role: 'system', content: sistema }, { role: 'user', content: 'Base:\\n' + $json.politicas_texto + '\\n\\nPergunta: ' + $json.mensagem } ] };\nreturn { json: { ...$json, corpo: JSON.stringify(corpo) } };",
+        "mode": "runOnceForEachItem"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1760,
+        0
+      ],
+      "id": "MontarcorpoEtapa3resC",
+      "name": "Montar corpo Etapa 3 resposta"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.corpo }}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1870,
+        0
+      ],
+      "id": "Etapa3respostaH",
+      "name": "Etapa 3 resposta",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 1000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_ME",
+          "name": "LLM Bearer Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const ant = $('Juntar politicas').item.json; const resposta = $input.item.json.choices[0].message.content;\nlet acao = 'respondido_automaticamente';\nif (ant.confianca < 0.7 || resposta.includes('Nao encontrei')) acao = 'encaminhado_humano';\nelse if (ant.intencao === 'venda') acao = 'encaminhado_vendas';\nreturn { json: { id: ant.id, protocolo: ant.protocolo, cliente_nome: ant.cliente_nome, cliente_email: ant.cliente_email, intencao: ant.intencao, confianca: ant.confianca, resposta, acao } };",
+        "mode": "runOnceForEachItem"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2090,
+        0
+      ],
+      "id": "DecidiracaoC",
+      "name": "Decidir acao"
+    },
+    {
+      "parameters": {
+        "jsCode": "const d = $json; const statusFinal = d.acao === 'respondido_automaticamente' ? 'respondida' : (d.acao === 'encaminhado_vendas' ? 'encaminhado_vendas' : 'escalada');\nconst corpo = { status: statusFinal, intencao: d.intencao, resposta: d.resposta };\nreturn { json: { ...d, corpo_patch: JSON.stringify(corpo) } };",
+        "mode": "runOnceForEachItem"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2310,
+        0
+      ],
+      "id": "MontarpatchC",
+      "name": "Montar patch"
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=http://3.210.122.73:8080/api/reclamacoes/{{ $json.id }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.corpo_patch }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2530,
+        0
+      ],
+      "id": "patch1",
+      "name": "Gravar na loja"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "ifresp",
+              "leftValue": "={{ $('Montar patch').item.json.acao }}",
+              "rightValue": "respondido_automaticamente",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2750,
+        0
+      ],
+      "id": "if1",
+      "name": "Pode responder sozinho?"
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $json.cliente_email }}",
+        "subject": "=Re: sua solicitacao {{ $json.protocolo }}",
+        "message": "={{ $json.resposta }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2970,
+        -80
+      ],
+      "id": "gmailsend",
+      "name": "Responder por e-mail",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "REPLACE_ME",
+          "name": "Gmail account"
+        }
+      },
+      "webhookId": "a367fe9a-5938-4e10-a5f2-fb97285402c2"
+    }
+  ],
+  "connections": {
+    "A cada minuto": {
+      "main": [
+        [
+          {
+            "node": "Buscar reclamacoes novas",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Buscar politicas (uma vez)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar reclamacoes novas": {
+      "main": [
+        [
+          {
+            "node": "Montar corpo Etapa 1 intencao",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Montar corpo Etapa 1 intencao": {
+      "main": [
+        [
+          {
+            "node": "Etapa 1 intencao",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Etapa 1 intencao": {
+      "main": [
+        [
+          {
+            "node": "Ler intencao",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ler intencao": {
+      "main": [
+        [
+          {
+            "node": "Montar corpo Etapa 2 extracao",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Montar corpo Etapa 2 extracao": {
+      "main": [
+        [
+          {
+            "node": "Etapa 2 extracao",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Etapa 2 extracao": {
+      "main": [
+        [
+          {
+            "node": "Ler extracao",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ler extracao": {
+      "main": [
+        [
+          {
+            "node": "Juntar politicas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Juntar politicas": {
+      "main": [
+        [
+          {
+            "node": "Montar corpo Etapa 3 resposta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Montar corpo Etapa 3 resposta": {
+      "main": [
+        [
+          {
+            "node": "Etapa 3 resposta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Etapa 3 resposta": {
+      "main": [
+        [
+          {
+            "node": "Decidir acao",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Decidir acao": {
+      "main": [
+        [
+          {
+            "node": "Montar patch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Montar patch": {
+      "main": [
+        [
+          {
+            "node": "Gravar na loja",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gravar na loja": {
+      "main": [
+        [
+          {
+            "node": "Pode responder sozinho?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pode responder sozinho?": {
+      "main": [
+        [
+          {
+            "node": "Responder por e-mail",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}

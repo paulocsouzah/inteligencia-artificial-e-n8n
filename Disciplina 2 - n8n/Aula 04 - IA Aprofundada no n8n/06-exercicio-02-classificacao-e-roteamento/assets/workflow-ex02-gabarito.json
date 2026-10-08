@@ -1,0 +1,460 @@
+{
+  "id": "aula04ex02gab002",
+  "name": "Aula 04 - Ex 02 - Classificacao e roteamento (gabarito)",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "m0",
+      "name": "Manual Trigger"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "http://3.210.122.73:8080/api/reclamacoes?status=nova",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "g1",
+      "name": "Buscar reclamacoes novas"
+    },
+    {
+      "parameters": {
+        "jsCode": "return { json: $input.all().map(i=>i.json).find(r => r.id === 3) };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        0
+      ],
+      "id": "EscolherreclamacaoC",
+      "name": "Escolher reclamacao"
+    },
+    {
+      "parameters": {
+        "jsCode": "const sistema = 'Classifique a intencao da reclamacao: venda (quer comprar ou conhecer produtos), suporte (problema com produto, entrega, troca ou uso), financeiro (cobranca, estorno, reembolso, pagamento ou boleto), outro (qualquer outro assunto).';\nconst corpo = { model: 'gpt-4o-mini', messages: [ { role: 'system', content: sistema }, { role: 'user', content: $json.mensagem } ], response_format: {\"type\": \"json_schema\", \"json_schema\": {\"name\": \"intencao\", \"strict\": true, \"schema\": {\"type\": \"object\", \"properties\": {\"intencao\": {\"type\": \"string\", \"enum\": [\"venda\", \"suporte\", \"financeiro\", \"outro\"]}, \"confianca\": {\"type\": \"number\"}}, \"required\": [\"intencao\", \"confianca\"], \"additionalProperties\": false}}} };\nreturn { json: { ...$json, corpo: JSON.stringify(corpo) } };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        660,
+        0
+      ],
+      "id": "MontarcorpoClassificC",
+      "name": "Montar corpo Classificar intencao"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.corpo }}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        770,
+        0
+      ],
+      "id": "ClassificarintencaoH",
+      "name": "Classificar intencao",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 1000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REPLACE_ME",
+          "name": "LLM Bearer Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const dados = JSON.parse($input.item.json.choices[0].message.content); const original = $('Escolher reclamacao').first().json; return { json: { reclamacao_id: original.id, protocolo: original.protocolo, intencao: dados.intencao, confianca: dados.confianca } };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        990,
+        0
+      ],
+      "id": "LerintencaoC",
+      "name": "Ler intencao"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "sw1",
+                    "leftValue": "={{ $json.intencao }}",
+                    "rightValue": "venda",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "outputKey": "venda"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "sw2",
+                    "leftValue": "={{ $json.intencao }}",
+                    "rightValue": "suporte",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "outputKey": "suporte"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "sw3",
+                    "leftValue": "={{ $json.intencao }}",
+                    "rightValue": "financeiro",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "outputKey": "financeiro"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1210,
+        0
+      ],
+      "id": "sw06",
+      "name": "Roteador de intencao"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = { status: 'triagem_vendas', intencao: $json.intencao }; return { json: { corpo_patch: JSON.stringify(body) } };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1430,
+        -160
+      ],
+      "id": "MontarpatchvendasC",
+      "name": "Montar patch vendas"
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=http://3.210.122.73:8080/api/reclamacoes/{{ $('Escolher reclamacao').first().json.id }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.corpo_patch }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1650,
+        -160
+      ],
+      "id": "patchvendas",
+      "name": "Gravar vendas"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = { status: 'triagem_suporte', intencao: $json.intencao }; return { json: { corpo_patch: JSON.stringify(body) } };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1430,
+        -20
+      ],
+      "id": "MontarpatchsuporteC",
+      "name": "Montar patch suporte"
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=http://3.210.122.73:8080/api/reclamacoes/{{ $('Escolher reclamacao').first().json.id }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.corpo_patch }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1650,
+        -20
+      ],
+      "id": "patchsuporte",
+      "name": "Gravar suporte"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = { status: 'triagem_financeiro', intencao: $json.intencao }; return { json: { corpo_patch: JSON.stringify(body) } };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1430,
+        120
+      ],
+      "id": "MontarpatchfinanceirC",
+      "name": "Montar patch financeiro"
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=http://3.210.122.73:8080/api/reclamacoes/{{ $('Escolher reclamacao').first().json.id }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.corpo_patch }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1650,
+        120
+      ],
+      "id": "patchfinanceiro",
+      "name": "Gravar financeiro"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = { status: 'triagem_humana', intencao: $json.intencao }; return { json: { corpo_patch: JSON.stringify(body) } };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1430,
+        260
+      ],
+      "id": "MontarpatchgeralC",
+      "name": "Montar patch geral"
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=http://3.210.122.73:8080/api/reclamacoes/{{ $('Escolher reclamacao').first().json.id }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.corpo_patch }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1650,
+        260
+      ],
+      "id": "patchgeral",
+      "name": "Gravar geral"
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Buscar reclamacoes novas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar reclamacoes novas": {
+      "main": [
+        [
+          {
+            "node": "Escolher reclamacao",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Escolher reclamacao": {
+      "main": [
+        [
+          {
+            "node": "Montar corpo Classificar intencao",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Montar corpo Classificar intencao": {
+      "main": [
+        [
+          {
+            "node": "Classificar intencao",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classificar intencao": {
+      "main": [
+        [
+          {
+            "node": "Ler intencao",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ler intencao": {
+      "main": [
+        [
+          {
+            "node": "Roteador de intencao",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Roteador de intencao": {
+      "main": [
+        [
+          {
+            "node": "Montar patch vendas",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Montar patch suporte",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Montar patch financeiro",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Montar patch geral",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Montar patch vendas": {
+      "main": [
+        [
+          {
+            "node": "Gravar vendas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Montar patch suporte": {
+      "main": [
+        [
+          {
+            "node": "Gravar suporte",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Montar patch financeiro": {
+      "main": [
+        [
+          {
+            "node": "Gravar financeiro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Montar patch geral": {
+      "main": [
+        [
+          {
+            "node": "Gravar geral",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}
